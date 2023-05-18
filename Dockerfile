@@ -1,44 +1,19 @@
-# 用alpine基础镜像虽然最终镜像最小
-# 但是现在无法解决rust musl编译问题
-# https://stackoverflow.com/questions/72461117/error-failed-to-run-custom-build-command-for-ring-v0-16-20
-# https://stackoverflow.com/questions/72462316/linking-with-x86-64-linux-musl-gcc-failed-exit-status-1
-# https://github.com/diesel-rs/diesel/issues/700
-# https://github.com/diesel-rs/diesel/issues/813
-
-# the packed image will encount a Segmentation fault (core dumped)
-# still did not figure out why would this happen 
-#
-# to reduce the docker image size
-# https://stackoverflow.com/questions/69144154/why-is-the-rust-docker-image-so-huge
 # build stage
-FROM rust:1.54-alpine as builder
+FROM rust:1.54-bullseye as builder
 WORKDIR /app
 COPY . /app
 RUN rustup default stable
-RUN rustup target add x86_64-unknown-linux-musl
-RUN apk update && apk add --no-cache libpq musl-dev pkgconfig openssl-dev postgresql-dev
-RUN cargo build --release --target=x86_64-unknown-linux-musl
+RUN cargo build --release
 # RUN cargo build
-
-# Prod stage
-# 采用alpine镜像需要特殊编译
-# 创建 x86_64-unknown-linux-musl 平台的应用程序，通过静态连接musl, 不再依赖glibc库
-# rustup target add x86_64-unknown-linux-musl # First time only
-# cargo build --release --target x86_64-unknown-linux-musl
-# 在macOS使用musl可以通过安装musl-cross-make实现
-# brew install FiloSottile/musl-cross/musl-cross
-FROM alpine:3.16
+FROM debian:bullseye-slim
 LABEL maintainer="jiangtingqiang@gmail.com"
 WORKDIR /app
 ENV ROCKET_ADDRESS=0.0.0.0
 # ENV ROCKET_PORT=11014
-# https://stackoverflow.com/questions/69153048/error-while-loading-shared-libraries-libpq-so-5-cannot-open-shared-object-file
-# https://unix.stackexchange.com/questions/668754/what-is-libpq-so-5-and-how-to-make-it-avaliable/668755
-RUN apk update && apk add --no-cache libpq curl musl-dev pkgconfig openssl-dev postgresql-dev
+RUN apt-get update && apt-get install libpq5 curl -y
 COPY --from=builder /app/.env /app
 COPY --from=builder /app/settings.toml /app
-# COPY --from=builder /app/target/debug/* /app/
-# 
+#
 # only copy the execute file to minimal the image size
 # do not copy the release folder
 COPY --from=builder /app/target/release/cv-server /app/
