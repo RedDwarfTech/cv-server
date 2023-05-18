@@ -1,7 +1,12 @@
 use entry::server::create_server;
+#[macro_use]
+extern crate diesel;
 
 mod entry;
 mod common;
+mod biz;
+mod model;
+mod service;
 
 #[rocket::main]
 async fn main() {

@@ -1,4 +1,4 @@
-use crate::common::health_controller;
+use crate::{common::health_controller, biz::cv::gen_controller};
 use rocket::{Build, Rocket};
 use rocket_okapi::{
     mount_endpoints_and_merged_docs,
@@ -12,7 +12,7 @@ pub fn create_server() -> Rocket<Build> {
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
-                url: "../fortune/openapi.json".to_owned(),
+                url: "../cv/openapi.json".to_owned(),
                 ..Default::default()
             }),
         )
@@ -34,8 +34,9 @@ pub fn create_server() -> Rocket<Build> {
         );
     let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
     mount_endpoints_and_merged_docs! {
-        building_rocket, "/fortune".to_owned(), openapi_settings,
-        "/actuator" => health_controller::get_routes_and_docs(&openapi_settings)
+        building_rocket, "/cv".to_owned(), openapi_settings,
+        "/actuator" => health_controller::get_routes_and_docs(&openapi_settings),
+        "/gen" => gen_controller::get_routes_and_docs(&openapi_settings)
     };
     building_rocket
 }

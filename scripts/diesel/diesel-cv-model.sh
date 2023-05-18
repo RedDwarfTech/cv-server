@@ -20,5 +20,5 @@ diesel_ext --derive Insertable,Queryable,QueryableByName,Debug,Serialize,Deseria
 --import-types "rocket::serde::Serialize" \
 --import-types "serde::Deserialize" \
 --import-types "crate::model::diesel::cv::cv_schema::*" \
---schema-file "${PROJECT_DIR}"/src/model/diesel/cv/fortune_schema.rs --model > "${PROJECT_DIR}"/src/model/diesel/cv/cv_models.rs
+--schema-file "${PROJECT_DIR}"/src/model/diesel/cv/cv_schema.rs --model > "${PROJECT_DIR}"/src/model/diesel/cv/cv_models.rs
 
