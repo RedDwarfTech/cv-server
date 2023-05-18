@@ -1,6 +1,7 @@
-use entry::server::create_server;
 #[macro_use]
 extern crate diesel;
+
+use entry::server::create_server;
 
 mod entry;
 mod common;

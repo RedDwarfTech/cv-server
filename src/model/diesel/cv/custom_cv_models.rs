@@ -8,6 +8,7 @@ use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+// https://stackoverflow.com/questions/76282080/is-it-possible-to-make-rust-recognized-the-new-rust-diesel-model
 #[diesel(table_name = cv_gen)]
 pub struct CvGen {
     pub id: i64,

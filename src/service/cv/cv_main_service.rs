@@ -1,7 +1,7 @@
-use diesel::{QueryDsl, ExpressionMethods, TextExpressionMethods};
+use diesel::{QueryDsl, ExpressionMethods};
 use rust_wheel::{model::user::login_user_info::LoginUserInfo};
 use rust_wheel::config::db::config;
-use crate::model::diesel::cv::cv_models::CvGen;
+use crate::model::diesel::cv::custom_cv_models::CvGen;
 use crate::diesel::RunQueryDsl;
 
 pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvGen> {

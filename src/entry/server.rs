@@ -1,4 +1,4 @@
-use crate::{common::health_controller, biz::cv::gen_controller};
+use crate::{common::health_controller, biz::cv::{gen_controller, cv_main_controller}};
 use rocket::{Build, Rocket};
 use rocket_okapi::{
     mount_endpoints_and_merged_docs,
@@ -36,7 +36,8 @@ pub fn create_server() -> Rocket<Build> {
     mount_endpoints_and_merged_docs! {
         building_rocket, "/cv".to_owned(), openapi_settings,
         "/actuator" => health_controller::get_routes_and_docs(&openapi_settings),
-        "/gen" => gen_controller::get_routes_and_docs(&openapi_settings)
+        "/gen" => gen_controller::get_routes_and_docs(&openapi_settings),
+        "/cv" => cv_main_controller::get_routes_and_docs(&openapi_settings)
     };
     building_rocket
 }
