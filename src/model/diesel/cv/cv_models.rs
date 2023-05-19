@@ -8,7 +8,7 @@ use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
-#[diesel(table_name = cv_gen)]
+#[diesel(table_name = "cv_gen")]
 pub struct CvGen {
     pub id: i64,
     pub cv_name: String,
@@ -19,5 +19,19 @@ pub struct CvGen {
     pub cv_status: i32,
     pub gen_time: Option<i64>,
     pub path: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = "cv_template")]
+pub struct CvTemplate {
+    pub id: i64,
+    pub name: String,
+    pub remark: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub template_status: i32,
+    pub template_id: String,
+    pub preview_url: Option<String>,
+    pub template_code: Option<String>,
 }
 
