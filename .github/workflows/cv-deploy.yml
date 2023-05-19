@@ -28,13 +28,13 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.ALI_DOCKER_HUB_REGISTRY }}/reddwarf-pro/cv:latest 
+        tags: ${{ secrets.ALI_DOCKER_HUB_REGISTRY }}/reddwarf-pro/cv:${{ github.sha }} 
 
     - name: deploy to cluster
       uses: steebchen/kubectl@v2.0.0
       with: 
         config: ${{ secrets.KUBE_CONFIG_DATA }}
-        command: set image --record deployment/cv-service cv-service=${{ secrets.ALI_DOCKER_HUB_REGISTRY }}/reddwarf-pro/cv:latest -n reddwarf-pro
+        command: set image --record deployment/cv-service cv-service=${{ secrets.ALI_DOCKER_HUB_REGISTRY }}/reddwarf-pro/cv:${{ github.sha }} -n reddwarf-pro
 
     - name: verify deployment
       uses: steebchen/kubectl@v2.0.0
