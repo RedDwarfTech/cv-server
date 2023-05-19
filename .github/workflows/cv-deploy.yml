@@ -26,6 +26,6 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v3
       with:
-        context: ${{ secrets.ALI_DOCKER_HUB_REGISTRY }}
+        context: .
         push: true
-        tags: reddwarf-pro/cv:latest 
+        tags: ${{ secrets.ALI_DOCKER_HUB_REGISTRY }}/reddwarf-pro/cv:latest 
