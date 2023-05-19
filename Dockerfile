@@ -10,7 +10,7 @@ LABEL maintainer="jiangtingqiang@gmail.com"
 WORKDIR /app
 ENV ROCKET_ADDRESS=0.0.0.0
 # ENV ROCKET_PORT=11014
-RUN apk update && apk install libpq5 curl -y
+RUN apk update -y && apk install libpq5 curl -y
 COPY --from=builder /app/.env /app
 COPY --from=builder /app/settings.toml /app
 #
