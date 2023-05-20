@@ -5,7 +5,7 @@ COPY . /app
 RUN rustup default stable
 RUN cargo build --release
 # RUN cargo build
-FROM debian:bullseye
+FROM debian:bullseye-slim
 LABEL maintainer="jiangtingqiang@gmail.com"
 WORKDIR /app
 ENV ROCKET_ADDRESS=0.0.0.0
