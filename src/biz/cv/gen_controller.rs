@@ -1,4 +1,5 @@
 use okapi::openapi3::OpenApi;
+use rocket::put;
 use rocket::serde::json::Json;
 use rocket::{post, response::content};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
@@ -28,7 +29,7 @@ pub fn add(request: Json<GenRequest>, login_user_info: LoginUserInfo) -> content
 ///
 /// 更新简历生成结果
 #[openapi(tag = "更新简历生成结果")]
-#[post("/v1/result", data = "<request>")]
+#[put("/v1/result", data = "<request>")]
 pub fn flush_render_result(
     request: Json<RenderResultRequest>,
     login_user_info: LoginUserInfo,
