@@ -9,6 +9,7 @@ table! {
         cv_status -> Int4,
         gen_time -> Nullable<Int8>,
         path -> Nullable<Varchar>,
+        template_id -> Int8,
     }
 }
 

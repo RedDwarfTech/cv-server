@@ -20,6 +20,7 @@ pub struct CvGen {
     pub cv_status: i32,
     pub gen_time: Option<i64>,
     pub path: Option<String>,
+    pub template_id: i64
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
