@@ -18,7 +18,7 @@ pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvGen> {
     return user_bill_books;
 }
 
-pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> CvMainResp {
+pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMainResp> {
     use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
     let mut query = cv_main_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(
@@ -29,9 +29,12 @@ pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> CvMainResp {
     let cv_result: Vec<CvMain> = query
         .load::<CvMain>(&mut get_connection())
         .expect("error get cv");
+    if cv_result.is_empty() {
+        return None;
+    }
     let section_resp = get_section_by_cv(cv_id);
     let cv_resp = CvMainResp::from(&cv_result.get(0).unwrap(), section_resp);
-    return cv_resp;
+    return Some(cv_resp);
 }
 
 pub fn get_content_by_section(section_ids: Vec<i64>) -> Vec<SectionContentResp> {

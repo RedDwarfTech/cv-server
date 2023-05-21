@@ -27,5 +27,9 @@ pub fn get(login_user_info: LoginUserInfo) -> content::RawJson<String> {
 #[get("/v1/cv/<id>")]
 pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = get_cv_by_id(id, &login_user_info);
-    return box_rest_response(gen_cv);
+    if let Some(v) = gen_cv {
+        return box_rest_response(v);
+    } else {
+        return box_rest_response("no data");
+    }
 }
