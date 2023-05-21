@@ -6,6 +6,10 @@ with_docs = false
 
 filter = { only_tables = [
     "cv_gen",
-    "cv_template"
+    "cv_template",
+    "cv_main",
+    "cv_section",
+    "cv_section_content",
+    "cv_section_type",
 ] }
 
