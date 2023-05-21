@@ -15,6 +15,55 @@ table! {
 }
 
 table! {
+    cv_main (id) {
+        id -> Int8,
+        cv_name -> Varchar,
+        remark -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        user_id -> Int8,
+        cv_status -> Int4,
+        template_id -> Int8,
+        employee_name -> Nullable<Varchar>,
+        birthday -> Nullable<Varchar>,
+        phone -> Nullable<Varchar>,
+        email -> Nullable<Varchar>,
+    }
+}
+
+table! {
+    cv_section (id) {
+        id -> Int8,
+        section_abbr -> Varchar,
+        remark -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        cv_id -> Nullable<Int8>,
+    }
+}
+
+table! {
+    cv_section_content (id) {
+        id -> Int8,
+        section_id -> Int8,
+        created_time -> Int8,
+        updated_time -> Int8,
+        item_key -> Nullable<Varchar>,
+        item_value -> Nullable<Varchar>,
+    }
+}
+
+table! {
+    cv_section_type (id) {
+        id -> Int8,
+        item_name -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        item_abbr -> Nullable<Varchar>,
+    }
+}
+
+table! {
     cv_template (id) {
         id -> Int8,
         name -> Varchar,
@@ -30,5 +79,9 @@ table! {
 
 allow_tables_to_appear_in_same_query!(
     cv_gen,
+    cv_main,
+    cv_section,
+    cv_section_content,
+    cv_section_type,
     cv_template,
 );

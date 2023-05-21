@@ -3,7 +3,7 @@
 #![allow(unused)]
 #![allow(clippy::all)]
 
-use rocket::serde::Serialize;
+use serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
 
@@ -36,4 +36,53 @@ pub struct CvTemplate {
     pub template_id: i64,
     pub preview_url: Option<String>,
     pub template_code: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = cv_main)]
+pub struct CvMain {
+    pub id: i64,
+    pub cv_name: String,
+    pub remark: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub user_id: i64,
+    pub cv_status: i32,
+    pub template_id: i64,
+    pub employee_name: Option<String>,
+    pub birthday: Option<String>,
+    pub phone: Option<String>,
+    pub email: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = cv_section)]
+pub struct CvSection {
+    pub id: i64,
+    pub section_abbr: String,
+    pub remark: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: Option<i64>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = cv_section_content)]
+pub struct CvSectionContent {
+    pub id: i64,
+    pub section_id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub item_key: Option<String>,
+    pub item_value: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = cv_section_type)]
+pub struct CvSectionType {
+    pub id: i64,
+    pub item_name: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub item_abbr: Option<String>,
 }
