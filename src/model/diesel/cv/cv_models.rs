@@ -7,6 +7,22 @@ use serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
 
+use chrono::DateTime;
+use chrono::offset::Utc;
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = "cv_edu")]
+pub struct CvEdu {
+    pub id: i64,
+    pub edu_addr: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: Option<i64>,
+    pub degree: Option<String>,
+    pub major: Option<String>,
+    pub admission: Option<DateTime<Utc>>,
+    pub graduation: Option<DateTime<Utc>>,
+}
+
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[diesel(table_name = "cv_gen")]
 pub struct CvGen {
@@ -33,7 +49,7 @@ pub struct CvMain {
     pub updated_time: i64,
     pub user_id: i64,
     pub cv_status: i32,
-    pub template_id: String,
+    pub template_id: i64,
     pub employee_name: Option<String>,
     pub birthday: Option<String>,
     pub phone: Option<String>,

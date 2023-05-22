@@ -1,4 +1,19 @@
 table! {
+    cv_edu (id) {
+        id -> Int8,
+        edu_addr -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        cv_id -> Int8,
+        user_id -> Int8,
+        degree -> Nullable<Varchar>,
+        major -> Nullable<Varchar>,
+        admission -> Nullable<Timestamptz>,
+        graduation -> Nullable<Timestamptz>,
+    }
+}
+
+table! {
     cv_gen (id) {
         id -> Int8,
         cv_name -> Varchar,
@@ -78,6 +93,7 @@ table! {
 }
 
 allow_tables_to_appear_in_same_query!(
+    cv_edu,
     cv_gen,
     cv_main,
     cv_section,

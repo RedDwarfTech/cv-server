@@ -1,2 +1,0 @@
-[dependencies]
-diesel = { version = "2.0.4", features = ["postgres","64-column-tables","chrono","serde_json"] }

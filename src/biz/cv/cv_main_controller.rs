@@ -13,11 +13,11 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// # 查询简历
 ///
 /// 查询简历
-#[openapi(tag = "简历")]
-#[get("/v1/cv")]
+#[openapi(tag = "用户简历列表")]
+#[get("/v1/cv/list")]
 pub fn get(login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let gen_cv = cv_main_list(&login_user_info);
-    return box_rest_response(gen_cv);
+    let main_cvs = cv_main_list(&login_user_info);
+    return box_rest_response(main_cvs);
 }
 
 /// # 根据ID查询简历

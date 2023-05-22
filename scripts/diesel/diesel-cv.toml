@@ -11,5 +11,6 @@ filter = { only_tables = [
     "cv_section",
     "cv_section_content",
     "cv_section_type",
+    "cv_edu"
 ] }
 

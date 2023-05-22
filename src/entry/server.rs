@@ -1,6 +1,6 @@
 use crate::{
     biz::{
-        cv::{cv_main_controller, gen_controller},
+        cv::{cv_main_controller, gen_controller, edu::edu_controller},
         template::cv_template_controller,
     },
     common::health_controller,
@@ -44,7 +44,8 @@ pub fn create_server() -> Rocket<Build> {
         "/actuator" => health_controller::get_routes_and_docs(&openapi_settings),
         "/gen" => gen_controller::get_routes_and_docs(&openapi_settings),
         "/cv" => cv_main_controller::get_routes_and_docs(&openapi_settings),
-        "/tpl" => cv_template_controller::get_routes_and_docs(&openapi_settings)
+        "/tpl" => cv_template_controller::get_routes_and_docs(&openapi_settings),
+        "/cv/edu" => edu_controller::get_routes_and_docs(&openapi_settings),
     };
     building_rocket
 }
