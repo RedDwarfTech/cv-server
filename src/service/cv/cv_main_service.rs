@@ -17,8 +17,26 @@ pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvMain> {
     query = query.filter(cv_main_table::user_id.eq(login_user_info.userId));
     let cvs = query
         .load::<CvMain>(&mut get_connection())
-        .expect("error get user bill book");
+        .expect("error get cv main");
     return cvs;
+}
+
+pub fn get_cv_summary(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMain>{
+    use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
+    let mut query = cv_main_table::table.into_boxed::<diesel::pg::Pg>();
+    query = query.filter(
+        cv_main_table::user_id
+            .eq(login_user_info.userId)
+            .and(cv_main_table::id.eq(cv_id)),
+    );
+    let cv_result: Vec<CvMain> = query
+        .load::<CvMain>(&mut get_connection())
+        .expect("error get cv summary");
+    if cv_result.len() > 0 {
+        return Some(cv_result.get(0).unwrap().clone());
+    }else{
+        return None;
+    }
 }
 
 pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMainResp> {
@@ -80,7 +98,10 @@ pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUs
             crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId)
         );
         let update_result = diesel::update(cv_main.filter(predicate))
-        .set(employee_name.eq(&request.employee_name))
+        .set((
+            employee_name.eq(&request.employee_name),
+            job.eq(&request.job)
+        ))
         .get_result::<CvMain>(&mut get_connection())
         .expect("unable to update ren result");
         return Some(update_result);
