@@ -1,6 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvMain, CvSection, CvSectionContent};
+use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
@@ -106,8 +107,9 @@ pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUs
         .expect("unable to update ren result");
         return Some(update_result);
     }else{
+        let cv_summary = CvMainAdd::from(request,login_user_info);
         let result = diesel::insert_into(cv_main)
-        .values(&cv_main)
+        .values(&cv_summary)
         .on_conflict(id)
         .do_update()
         .set((
@@ -117,7 +119,8 @@ pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUs
         ))
         .get_result::<CvMain>(&mut get_connection());
     match result {
-        Err(_) => {
+        Err(err) => {
+            println!("{}", err);
             return None;
         }
         Ok(main) => {

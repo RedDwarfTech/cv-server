@@ -11,5 +11,6 @@ pub struct EditMainRequest {
     pub phone: String,
     pub email: String,
     pub birthday: String,
-    pub job: String
+    pub job: String,
+    pub workspace: String,
 }
