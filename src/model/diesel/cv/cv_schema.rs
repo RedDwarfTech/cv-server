@@ -43,6 +43,8 @@ table! {
         birthday -> Nullable<Varchar>,
         phone -> Nullable<Varchar>,
         email -> Nullable<Varchar>,
+        job -> Nullable<Varchar>,
+        workplace -> Nullable<Varchar>,
     }
 }
 

@@ -8,6 +8,7 @@ use crate::model::response::cv::section_content_resp::SectionContentResp;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
+use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvMain> {
@@ -72,14 +73,35 @@ pub fn get_section_by_cv(cv_id: i64) -> Vec<CvSectionResp> {
     return sec_resp;
 }
 
-pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUserInfo) -> CvMain{
+pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUserInfo) -> Option<CvMain>{
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
-    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id.eq(request.id).and(
-        crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId)
-    );
-    let update_result = diesel::update(cv_main.filter(predicate))
-    .set(employee_name.eq(&request.employee_name))
-    .get_result::<CvMain>(&mut get_connection())
-    .expect("unable to update ren result");
-    return update_result;
+    if request.id.is_some() {
+        let predicate = crate::model::diesel::cv::cv_schema::cv_main::id.eq(request.id.unwrap()).and(
+            crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId)
+        );
+        let update_result = diesel::update(cv_main.filter(predicate))
+        .set(employee_name.eq(&request.employee_name))
+        .get_result::<CvMain>(&mut get_connection())
+        .expect("unable to update ren result");
+        return Some(update_result);
+    }else{
+        let result = diesel::insert_into(cv_main)
+        .values(&cv_main)
+        .on_conflict(id)
+        .do_update()
+        .set((
+            employee_name.eq(&request.employee_name),
+            (updated_time.eq(get_current_millisecond())),
+            job.eq(&request.job)
+        ))
+        .get_result::<CvMain>(&mut get_connection());
+    match result {
+        Err(_) => {
+            return None;
+        }
+        Ok(main) => {
+            return Some(main);
+        }
+    }
+    }
 }

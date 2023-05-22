@@ -1,5 +1,5 @@
 use okapi::openapi3::OpenApi;
-use rocket::{get, response::content, put, serde::json::Json};
+use rocket::{get, response::content, serde::json::Json, post};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::{
     common::util::model_convert::box_rest_response, model::user::login_user_info::LoginUserInfo,
@@ -38,7 +38,7 @@ pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJso
 ///
 /// 更新简历基础信息
 #[openapi(tag = "更新简历基础信息")]
-#[put("/v1/cv", data = "<request>")]
+#[post("/v1/cv", data = "<request>")]
 pub fn edit_cv_summary(request: Json<EditMainRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = update_cv_main(&request, &login_user_info);
     return box_rest_response(gen_cv);
