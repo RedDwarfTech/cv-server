@@ -9,7 +9,6 @@ use super::{cv_section_resp::CvSectionResp};
 pub struct CvMainResp {
     pub id: i64,
     pub cv_name: String,
-    pub remark: String,
     pub created_time: i64,
     pub updated_time: i64,
     pub user_id: i64,
@@ -27,7 +26,6 @@ impl CvMainResp {
         Self {
             id: cv_main.id,
             cv_name: cv_main.cv_name.to_string(),
-            remark: cv_main.remark.to_string(),
             created_time: cv_main.created_time,
             updated_time: cv_main.updated_time,
             user_id: cv_main.user_id,

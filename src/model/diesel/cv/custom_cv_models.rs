@@ -47,7 +47,6 @@ pub struct CvTemplate {
 pub struct CvMain {
     pub id: i64,
     pub cv_name: String,
-    pub remark: String,
     pub created_time: i64,
     pub updated_time: i64,
     pub user_id: i64,
