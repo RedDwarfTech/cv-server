@@ -5,11 +5,11 @@ table! {
         created_time -> Int8,
         updated_time -> Int8,
         cv_id -> Int8,
-        user_id -> Int8,
         degree -> Nullable<Varchar>,
         major -> Nullable<Varchar>,
-        admission -> Nullable<Timestamptz>,
-        graduation -> Nullable<Timestamptz>,
+        admission -> Nullable<Date>,
+        graduation -> Nullable<Date>,
+        user_id -> Int8,
     }
 }
 

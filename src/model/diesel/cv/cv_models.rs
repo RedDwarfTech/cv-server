@@ -7,8 +7,7 @@ use serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
 
-use chrono::DateTime;
-use chrono::offset::Utc;
+use chrono::NaiveDate;
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[diesel(table_name = "cv_edu")]
 pub struct CvEdu {
@@ -16,11 +15,12 @@ pub struct CvEdu {
     pub edu_addr: String,
     pub created_time: i64,
     pub updated_time: i64,
-    pub cv_id: Option<i64>,
+    pub cv_id: i64,
     pub degree: Option<String>,
     pub major: Option<String>,
-    pub admission: Option<DateTime<Utc>>,
-    pub graduation: Option<DateTime<Utc>>,
+    pub admission: Option<NaiveDate>,
+    pub graduation: Option<NaiveDate>,
+    pub user_id: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

@@ -3,6 +3,8 @@
 #![allow(unused)]
 #![allow(clippy::all)]
 
+use chrono::NaiveDate;
+use diesel::sql_types::Date;
 use serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
@@ -97,11 +99,11 @@ pub struct CvEdu {
     pub created_time: i64,
     pub updated_time: i64,
     pub cv_id: i64,
-    pub user_id: i64,
     pub degree: Option<String>,
     pub major: Option<String>,
-    pub admission: Option<DateTime<Utc>>,
-    pub graduation: Option<DateTime<Utc>>,
+    pub admission: Option<NaiveDate>,
+    pub graduation: Option<NaiveDate>,
+    pub user_id: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -114,6 +116,6 @@ pub struct CvEduAdd {
     pub user_id: i64,
     pub degree: Option<String>,
     pub major: Option<String>,
-    pub admission: Option<DateTime<Utc>>,
-    pub graduation: Option<DateTime<Utc>>,
+    pub admission: Option<NaiveDate>,
+    pub graduation: Option<NaiveDate>,
 }

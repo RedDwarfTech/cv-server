@@ -1,6 +1,6 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvGen, CvMain, CvSection, CvSectionContent};
+use crate::model::diesel::cv::custom_cv_models::{CvMain, CvSection, CvSectionContent};
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
@@ -60,9 +60,11 @@ pub fn get_section_by_cv(cv_id: i64) -> Vec<CvSectionResp> {
     let content_resp = get_content_by_section(section_ids);
     for mut sec_item in sec_resp.iter_mut() {
         let item_id: i64 = sec_item.id;
-        let contents:Vec<_> = content_resp.iter().filter(|item| item.section_id == item_id)
-        .map(|section_content_resp| section_content_resp.to_owned())
-        .collect();
+        let contents: Vec<_> = content_resp
+            .iter()
+            .filter(|item| item.section_id == item_id)
+            .map(|section_content_resp| section_content_resp.to_owned())
+            .collect();
         sec_item.section_content = contents;
     }
     return sec_resp;
