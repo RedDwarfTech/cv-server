@@ -1,13 +1,13 @@
 use okapi::openapi3::OpenApi;
-use rocket::{get, response::content};
+use rocket::{get, response::content, put, serde::json::Json};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::{
     common::util::model_convert::box_rest_response, model::user::login_user_info::LoginUserInfo,
 };
-use crate::service::cv::cv_main_service::{cv_main_list, get_cv_by_id};
+use crate::{service::cv::cv_main_service::{cv_main_list, get_cv_by_id, update_cv_main}, model::request::cv::main::edit_main_request::EditMainRequest};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: get, get_cv_detail]
+    openapi_get_routes_spec![settings: get, get_cv_detail, edit_cv_summary]
 }
 
 /// # 查询简历
@@ -32,4 +32,14 @@ pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJso
     } else {
         return box_rest_response("no data");
     }
+}
+
+/// # 更新简历基础信息
+///
+/// 更新简历基础信息
+#[openapi(tag = "更新简历基础信息")]
+#[put("/v1/cv", data = "<request>")]
+pub fn edit_cv_summary(request: Json<EditMainRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let gen_cv = update_cv_main(&request, &login_user_info);
+    return box_rest_response(gen_cv);
 }

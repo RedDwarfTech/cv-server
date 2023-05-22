@@ -27,7 +27,7 @@ pub fn add(request: Json<EduRequest>, login_user_info: LoginUserInfo) -> content
 ///
 /// 获取教育信息
 #[openapi(tag = "教育信息")]
-#[get("/v1/<cv_id>")]
+#[get("/v1?<cv_id>")]
 pub fn edu_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = get_edu_list(&cv_id, &login_user_info);
     return box_rest_response(cv_edu_list);

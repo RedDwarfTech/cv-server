@@ -1,10 +1,12 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvMain, CvSection, CvSectionContent};
+use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
+use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
@@ -68,4 +70,16 @@ pub fn get_section_by_cv(cv_id: i64) -> Vec<CvSectionResp> {
         sec_item.section_content = contents;
     }
     return sec_resp;
+}
+
+pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUserInfo) -> CvMain{
+    use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id.eq(request.id).and(
+        crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId)
+    );
+    let update_result = diesel::update(cv_main.filter(predicate))
+    .set(employee_name.eq(&request.employee_name))
+    .get_result::<CvMain>(&mut get_connection())
+    .expect("unable to update ren result");
+    return update_result;
 }
