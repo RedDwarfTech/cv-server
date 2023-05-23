@@ -53,10 +53,13 @@ pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJso
 #[delete("/v1/cv/<id>")]
 pub fn del_cv(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let del_result = del_cv_by_id(id, &login_user_info);
-    if del_result {
-        return box_rest_response(id);
-    } else {
-        return box_error_rest_response("-1", "500".to_string(), "failed".to_string());
+    match del_result {
+        Ok(_v) => {
+            return box_rest_response(id);
+        }
+        Err(e) => {
+            return box_error_rest_response("-1", "500".to_string(), e.to_string());
+        },
     }
 }
 

@@ -70,3 +70,20 @@ pub fn del_work_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool {
         }
     }
 }
+
+pub fn del_work_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+    use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::cv_id
+        .eq(del_cv_id)
+        .and(crate::model::diesel::cv::cv_schema::cv_work_exp::user_id.eq(login_user_info.userId));
+    let delete_result =
+        diesel::delete(cv_work_exp.filter(predicate)).execute(&mut get_connection());
+    match delete_result {
+        Ok(_v) => {
+            return true;
+        }
+        Err(_) => {
+            return false;
+        }
+    }
+}

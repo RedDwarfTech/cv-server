@@ -6,7 +6,10 @@ use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
+use crate::service::cv::edu::edu_service::del_edu_items;
+use crate::service::cv::work::work_exp_service::del_work_items;
+use diesel::result::Error;
+use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, Connection};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
@@ -22,7 +25,7 @@ pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvMain> {
     return cvs;
 }
 
-pub fn get_cv_summary(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMain>{
+pub fn get_cv_summary(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMain> {
     use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
     let mut query = cv_main_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(
@@ -35,26 +38,33 @@ pub fn get_cv_summary(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvM
         .expect("error get cv summary");
     if cv_result.len() > 0 {
         return Some(cv_result.get(0).unwrap().clone());
-    }else{
+    } else {
         return None;
     }
 }
 
-pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> bool {
+pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Result<&str,Error> {
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
-    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
-        .eq(cv_id)
-        .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
-    let delete_result =
-        diesel::delete(cv_main.filter(predicate)).execute(&mut get_connection());
-    match delete_result {
-        Ok(_v) => {
-            return true;
-        }
-        Err(_) => {
-            return false;
-        }
-    }
+    let mut connection = get_connection();
+    let result = connection.transaction(|connection| {
+        use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
+            let predicate = cv_main_table::user_id
+                .eq(login_user_info.userId)
+                .and(cv_main_table::id.eq(cv_id));
+            let delete_result =
+                diesel::delete(cv_main.filter(predicate)).execute(connection);
+            match delete_result {
+                Ok(_v) => {
+                    del_edu_items(&cv_id, login_user_info);
+                    del_work_items(&cv_id, login_user_info);
+                    Ok("")
+                }
+                Err(e) => {
+                    diesel::result::QueryResult::Err(e)
+                },
+            }
+    });
+    return result; 
 }
 
 pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMainResp> {
@@ -109,45 +119,48 @@ pub fn get_section_by_cv(cv_id: i64) -> Vec<CvSectionResp> {
     return sec_resp;
 }
 
-pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUserInfo) -> Option<CvMain>{
+pub fn update_cv_main(
+    request: &Json<EditMainRequest>,
+    login_user_info: &LoginUserInfo,
+) -> Option<CvMain> {
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
     if request.id.is_some() {
-        let predicate = crate::model::diesel::cv::cv_schema::cv_main::id.eq(request.id.unwrap()).and(
-            crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId)
-        );
+        let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
+            .eq(request.id.unwrap())
+            .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
         let update_result = diesel::update(cv_main.filter(predicate))
-        .set((
-            employee_name.eq(&request.employee_name),
-            job.eq(&request.job),
-            workplace.eq(&request.workplace),
-            phone.eq(&request.phone),
-            email.eq(&request.email),
-            birthday.eq(&request.birthday),
-            cv_name.eq(&request.cv_name),
-        ))
-        .get_result::<CvMain>(&mut get_connection())
-        .expect("unable to update ren result");
+            .set((
+                employee_name.eq(&request.employee_name),
+                job.eq(&request.job),
+                workplace.eq(&request.workplace),
+                phone.eq(&request.phone),
+                email.eq(&request.email),
+                birthday.eq(&request.birthday),
+                cv_name.eq(&request.cv_name),
+            ))
+            .get_result::<CvMain>(&mut get_connection())
+            .expect("unable to update ren result");
         return Some(update_result);
-    }else{
-        let cv_summary = CvMainAdd::from(request,login_user_info);
+    } else {
+        let cv_summary = CvMainAdd::from(request, login_user_info);
         let result = diesel::insert_into(cv_main)
-        .values(&cv_summary)
-        .on_conflict(id)
-        .do_update()
-        .set((
-            employee_name.eq(&request.employee_name),
-            (updated_time.eq(get_current_millisecond())),
-            job.eq(&request.job)
-        ))
-        .get_result::<CvMain>(&mut get_connection());
-    match result {
-        Err(err) => {
-            println!("{}", err);
-            return None;
+            .values(&cv_summary)
+            .on_conflict(id)
+            .do_update()
+            .set((
+                employee_name.eq(&request.employee_name),
+                (updated_time.eq(get_current_millisecond())),
+                job.eq(&request.job),
+            ))
+            .get_result::<CvMain>(&mut get_connection());
+        match result {
+            Err(err) => {
+                println!("{}", err);
+                return None;
+            }
+            Ok(main) => {
+                return Some(main);
+            }
         }
-        Ok(main) => {
-            return Some(main);
-        }
-    }
     }
 }
