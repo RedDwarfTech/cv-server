@@ -1,16 +1,25 @@
 use crate::{
     model::request::cv::main::edit_main_request::EditMainRequest,
-    service::cv::cv_main_service::{cv_main_list, get_cv_by_id, get_cv_summary, update_cv_main},
+    service::cv::cv_main_service::{
+        cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, update_cv_main,
+    },
 };
 use okapi::openapi3::OpenApi;
-use rocket::{get, post, response::content, serde::json::Json};
+use rocket::{delete, get, post, response::content, serde::json::Json};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::{
-    common::util::model_convert::box_rest_response, model::user::login_user_info::LoginUserInfo,
+    common::util::model_convert::{box_error_rest_response, box_rest_response},
+    model::user::login_user_info::LoginUserInfo,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: get, get_cv_detail, edit_cv_summary, get_summary]
+    openapi_get_routes_spec![
+        settings: get,
+        get_cv_detail,
+        edit_cv_summary,
+        get_summary,
+        del_cv
+    ]
 }
 
 /// # 查询简历
@@ -34,6 +43,20 @@ pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJso
         return box_rest_response(v);
     } else {
         return box_rest_response("no data");
+    }
+}
+
+/// # 根据ID删除简历
+///
+/// 根据ID删除简历
+#[openapi(tag = "根据ID删除简历")]
+#[delete("/v1/cv/<id>")]
+pub fn del_cv(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let del_result = del_cv_by_id(id, &login_user_info);
+    if del_result {
+        return box_rest_response(id);
+    } else {
+        return box_error_rest_response("-1", "500".to_string(), "failed".to_string());
     }
 }
 

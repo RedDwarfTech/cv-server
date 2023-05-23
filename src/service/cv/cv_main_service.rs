@@ -40,6 +40,23 @@ pub fn get_cv_summary(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvM
     }
 }
 
+pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> bool {
+    use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
+        .eq(cv_id)
+        .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
+    let delete_result =
+        diesel::delete(cv_main.filter(predicate)).execute(&mut get_connection());
+    match delete_result {
+        Ok(_v) => {
+            return true;
+        }
+        Err(_) => {
+            return false;
+        }
+    }
+}
+
 pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMainResp> {
     use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
     let mut query = cv_main_table::table.into_boxed::<diesel::pg::Pg>();
