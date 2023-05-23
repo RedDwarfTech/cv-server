@@ -25,7 +25,7 @@ pub struct CvMainAdd {
 impl CvMainAdd {
     pub(crate) fn from(request: &EditMainRequest, login_user_info: &LoginUserInfo) ->Self {
         Self {
-            cv_name: "cv_name".to_string(),
+            cv_name: request.cv_name.to_string(),
             created_time: get_current_millisecond(),
             updated_time: get_current_millisecond(),
             user_id: login_user_info.userId,
@@ -36,7 +36,7 @@ impl CvMainAdd {
             phone: Some(request.phone.to_string()),
             email: Some(request.email.to_string()),
             job: Some(request.job.to_string()),
-            workplace: Some(request.workspace.to_string()),
+            workplace: Some(request.workplace.to_string()),
         }
     }
 }

@@ -3,7 +3,7 @@ use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvEdu, CvEduAdd};
 use crate::model::request::cv::edu::edu_request::EduRequest;
 use chrono::NaiveDate;
-use diesel::{ExpressionMethods, QueryDsl};
+use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
@@ -55,4 +55,20 @@ pub fn get_edu_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvEdu> 
         .load::<CvEdu>(&mut get_connection())
         .expect("error get edu list");
     return cvs;
+}
+
+pub fn del_edu_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+    use crate::model::diesel::cv::cv_schema::cv_edu::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_edu::id
+        .eq(item_id)
+        .and(crate::model::diesel::cv::cv_schema::cv_edu::user_id.eq(login_user_info.userId));
+    let delete_result = diesel::delete(cv_edu.filter(predicate)).execute(&mut get_connection());
+    match delete_result {
+        Ok(_v) => {
+            return true;
+        }
+        Err(_) => {
+            return false;
+        }
+    }
 }

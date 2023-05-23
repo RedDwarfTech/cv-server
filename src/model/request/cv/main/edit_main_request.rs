@@ -12,5 +12,6 @@ pub struct EditMainRequest {
     pub email: String,
     pub birthday: String,
     pub job: String,
-    pub workspace: String,
+    pub workplace: String,
+    pub cv_name: String,
 }

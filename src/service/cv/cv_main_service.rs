@@ -101,7 +101,12 @@ pub fn update_cv_main(request: &Json<EditMainRequest>, login_user_info: &LoginUs
         let update_result = diesel::update(cv_main.filter(predicate))
         .set((
             employee_name.eq(&request.employee_name),
-            job.eq(&request.job)
+            job.eq(&request.job),
+            workplace.eq(&request.workplace),
+            phone.eq(&request.phone),
+            email.eq(&request.email),
+            birthday.eq(&request.birthday),
+            cv_name.eq(&request.cv_name),
         ))
         .get_result::<CvMain>(&mut get_connection())
         .expect("unable to update ren result");
