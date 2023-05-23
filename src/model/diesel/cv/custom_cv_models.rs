@@ -131,8 +131,8 @@ pub struct CvWorkExp {
     pub cv_id: i64,
     pub job: Option<String>,
     pub city: Option<String>,
-    pub admission: Option<NaiveDate>,
-    pub graduation: Option<NaiveDate>,
+    pub work_start: Option<NaiveDate>,
+    pub work_end: Option<NaiveDate>,
     pub user_id: i64,
 }
 
@@ -146,7 +146,7 @@ pub struct CvWorkExpAdd {
     pub cv_id: i64,
     pub job: Option<String>,
     pub city: Option<String>,
-    pub admission: Option<NaiveDate>,
-    pub graduation: Option<NaiveDate>,
+    pub work_start: Option<NaiveDate>,
+    pub work_end: Option<NaiveDate>,
     pub user_id: i64,
 }

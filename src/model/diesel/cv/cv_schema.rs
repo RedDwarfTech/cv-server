@@ -102,8 +102,8 @@ table! {
         cv_id -> Int8,
         job -> Nullable<Varchar>,
         city -> Nullable<Varchar>,
-        admission -> Nullable<Date>,
-        graduation -> Nullable<Date>,
+        work_start -> Nullable<Date>,
+        work_end -> Nullable<Date>,
         user_id -> Int8,
     }
 }
