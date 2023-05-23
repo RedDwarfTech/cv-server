@@ -93,6 +93,21 @@ table! {
     }
 }
 
+table! {
+    cv_work_exp (id) {
+        id -> Int8,
+        company -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        cv_id -> Int8,
+        job -> Nullable<Varchar>,
+        city -> Nullable<Varchar>,
+        admission -> Nullable<Date>,
+        graduation -> Nullable<Date>,
+        user_id -> Int8,
+    }
+}
+
 allow_tables_to_appear_in_same_query!(
     cv_edu,
     cv_gen,
@@ -101,4 +116,5 @@ allow_tables_to_appear_in_same_query!(
     cv_section_content,
     cv_section_type,
     cv_template,
+    cv_work_exp,
 );

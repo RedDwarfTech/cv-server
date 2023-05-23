@@ -103,3 +103,18 @@ pub struct CvTemplate {
     pub template_code: Option<String>,
 }
 
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = "cv_work_exp")]
+pub struct CvWorkExp {
+    pub id: i64,
+    pub company: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: i64,
+    pub job: Option<String>,
+    pub city: Option<String>,
+    pub admission: Option<NaiveDate>,
+    pub graduation: Option<NaiveDate>,
+    pub user_id: i64,
+}
+
