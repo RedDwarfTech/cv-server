@@ -1,11 +1,9 @@
-use schemars::JsonSchema;
-use serde::{Serialize, Deserialize};
-
+use super::{cv_section_resp::CvSectionResp, edu::cv_edu_resp::CvEduResp};
 use crate::model::diesel::cv::custom_cv_models::CvMain;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
-use super::{cv_section_resp::CvSectionResp};
-
-#[derive( Serialize, Queryable, Deserialize,Default, Clone, JsonSchema)]
+#[derive(Serialize, Queryable, Deserialize, Default, Clone, JsonSchema)]
 pub struct CvMainResp {
     pub id: i64,
     pub cv_name: String,
@@ -18,11 +16,16 @@ pub struct CvMainResp {
     pub birthday: Option<String>,
     pub phone: Option<String>,
     pub email: Option<String>,
-    pub cv_section: Vec<CvSectionResp>
+    pub cv_section: Vec<CvSectionResp>,
+    pub edu: Vec<CvEduResp>,
 }
 
 impl CvMainResp {
-    pub(crate) fn from(cv_main: &CvMain, sections: Vec<CvSectionResp>) ->Self {
+    pub(crate) fn from(
+        cv_main: &CvMain,
+        sections: Vec<CvSectionResp>,
+        edues: Vec<CvEduResp>,
+    ) -> Self {
         Self {
             id: cv_main.id,
             cv_name: cv_main.cv_name.to_string(),
@@ -36,6 +39,7 @@ impl CvMainResp {
             phone: cv_main.phone.to_owned(),
             email: cv_main.email.to_owned(),
             cv_section: sections,
+            edu: edues,
         }
     }
 }
