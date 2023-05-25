@@ -12,6 +12,8 @@ pub struct CvEduResp {
     pub degree: Option<String>,
     pub major: Option<String>,
     pub user_id: i64,
+    pub admission: Option<String>,
+    pub graduation: Option<String>,
 }
 
 impl From<&CvEdu> for CvEduResp {
@@ -25,6 +27,8 @@ impl From<&CvEdu> for CvEduResp {
             degree: s.degree.clone(),
             major: s.major.clone(),
             user_id: s.user_id,
+            admission: Some(s.admission.unwrap().to_string()),
+            graduation: Some(s.graduation.unwrap().to_string()),
         }
     }
 }
