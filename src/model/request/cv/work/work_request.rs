@@ -9,7 +9,8 @@ pub struct WorkRequest {
     pub cv_id: i64,
     pub company: String,
     pub job: String,
-    pub start: String,
-    pub end: String,
+    pub city: String,
+    pub work_start: String,
+    pub work_end: String,
     pub id: Option<i64>,
 }

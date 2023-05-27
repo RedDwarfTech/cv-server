@@ -10,5 +10,5 @@ schemars = "0.7"
 rocket_okapi = { git = "https://github.com/GREsau/okapi.git", features = ["swagger", "rapidoc"] }
 serde = { version = "1.0.64", features = ["derive"] }
 diesel = { version = "2.0.4", features = ["postgres","64-column-tables","chrono","serde_json"] }
-rust_wheel = { git = "https://github.com/jiangxiaoqiang/rust_wheel.git", branch = "diesel2.0" }
+rust_wheel = { git = "https://github.com/jiangxiaoqiang/rust_wheel.git", branch = "diesel2.0", features = ["model","common","config"]}
 chrono = {version = "0.4",features = ["serde"]}

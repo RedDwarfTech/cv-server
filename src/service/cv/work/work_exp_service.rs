@@ -11,9 +11,9 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) -> Vec<CvWorkExp> {
     use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
     let admission_dt =
-        NaiveDate::parse_from_str(&request.start.to_string(), "%Y-%m-%d").unwrap();
+        NaiveDate::parse_from_str(&request.work_start.to_string(), "%Y-%m-%d").unwrap();
     let graduation_dt =
-        NaiveDate::parse_from_str(&request.end.to_string(), "%Y-%m-%d").unwrap();
+        NaiveDate::parse_from_str(&request.work_end.to_string(), "%Y-%m-%d").unwrap();
     let cv_edu_model = CvWorkExpAdd {
         created_time: get_current_millisecond(),
         updated_time: get_current_millisecond(),
@@ -21,9 +21,9 @@ pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) ->
         user_id: login_user_info.userId,
         work_start: Some(admission_dt),
         work_end: Some(graduation_dt),
-        company: "reddwarf".to_owned(),
-        job: Some("frontend".to_owned()),
-        city: Some("todo!()".to_owned()),
+        company: request.company.clone(),
+        job: Some(request.job.clone()),
+        city: Some(request.city.to_string()),
     };
     let result = diesel::insert_into(cv_work_exp)
         .values(&cv_edu_model)
