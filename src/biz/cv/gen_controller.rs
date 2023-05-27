@@ -1,5 +1,5 @@
 use okapi::openapi3::OpenApi;
-use rocket::put;
+use rocket::{put, get};
 use rocket::serde::json::Json;
 use rocket::{post, response::content};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
@@ -20,9 +20,9 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 ///
 /// 查询简历生成记录
 #[openapi(tag = "简历生成记录")]
-#[post("/v1/list", data = "<request>")]
-pub fn add(request: Json<GenRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let gen_cv = cv_gen_list(request.cv_name.clone(), &login_user_info);
+#[get("/v1/list?<cv_name>")]
+pub fn add(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let gen_cv = cv_gen_list(cv_name.clone(), &login_user_info);
     return box_rest_response(gen_cv);
 }
 
