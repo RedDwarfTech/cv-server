@@ -1,7 +1,8 @@
 use crate::{
     model::request::cv::main::edit_main_request::EditMainRequest,
     service::cv::cv_main_service::{
-        cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, update_cv_main,
+        cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, get_render_cv_by_id,
+        update_cv_main,
     },
 };
 use okapi::openapi3::OpenApi;
@@ -18,7 +19,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         get_cv_detail,
         edit_cv_summary,
         get_summary,
-        del_cv
+        del_cv,
+        get_render_cv_detail
     ]
 }
 
@@ -46,6 +48,20 @@ pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJso
     }
 }
 
+/// # 根据ID查询简历
+///
+/// 根据ID查询简历
+#[openapi(tag = "根据ID查询简历(渲染器)")]
+#[get("/v1/render-cv/<id>")]
+pub fn get_render_cv_detail(id: i64) -> content::RawJson<String> {
+    let gen_cv = get_render_cv_by_id(id);
+    if let Some(v) = gen_cv {
+        return box_rest_response(v);
+    } else {
+        return box_rest_response("no data");
+    }
+}
+
 /// # 根据ID删除简历
 ///
 /// 根据ID删除简历
@@ -59,7 +75,7 @@ pub fn del_cv(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Strin
         }
         Err(e) => {
             return box_error_rest_response("-1", "500".to_string(), e.to_string());
-        },
+        }
     }
 }
 

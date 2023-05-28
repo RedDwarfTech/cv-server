@@ -29,6 +29,22 @@ pub struct CvGen {
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+// https://stackoverflow.com/questions/76282080/is-it-possible-to-make-rust-recognized-the-new-rust-diesel-model
+#[diesel(table_name = cv_gen)]
+pub struct CvGenAdd {
+    pub cv_name: String,
+    pub remark: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub user_id: i64,
+    pub gen_status: i32,
+    pub gen_time: Option<i64>,
+    pub path: Option<String>,
+    pub template_id: i64,
+    pub cv_id: i64,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[diesel(table_name = cv_template)]
 pub struct CvTemplate {
     pub id: i64,
