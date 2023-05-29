@@ -96,6 +96,7 @@ pub fn update_gen_result(request: Json<RenderResultRequest>) {
             gen_status.eq(&request.gen_status),
             (path.eq(request.path.to_string())),
             (updated_time.eq(get_current_millisecond())),
+            (gen_time.eq(get_current_millisecond()))
         ))
         .get_result::<CvGen>(&mut get_connection())
         .expect("unable to update ren result");
