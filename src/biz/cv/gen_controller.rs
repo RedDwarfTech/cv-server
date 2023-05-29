@@ -96,5 +96,9 @@ pub fn flush_render_result(request: Json<RenderResultRequest>) -> content::RawJs
 #[delete("/v1/<id>")]
 pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = del_gen_impl(&id, &login_user_info);
-    return box_rest_response(gen_cv);
+    if gen_cv {
+        return box_rest_response(id);
+    }else{
+        return box_error_rest_response("-1","500".to_string(),"failed".to_string());
+    }
 }
