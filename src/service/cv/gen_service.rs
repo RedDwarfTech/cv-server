@@ -94,7 +94,7 @@ pub fn update_gen_result(request: Json<RenderResultRequest>, login_user_info: &L
         .eq(request.id)
         .and(crate::model::diesel::cv::cv_schema::cv_gen::user_id.eq(login_user_info.userId));
     diesel::update(cv_gen.filter(predicate))
-        .set(gen_status.eq(&request.gen_status))
+        .set((gen_status.eq(&request.gen_status), (path.eq(request.path.to_string()))))
         .get_result::<CvGen>(&mut get_connection())
         .expect("unable to update ren result");
 }
