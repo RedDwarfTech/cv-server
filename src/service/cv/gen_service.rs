@@ -50,7 +50,7 @@ pub fn create_gen_task(
 ) -> Result<CvGen, diesel::result::Error> {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
     let cv_gen_add = CvGenAdd {
-        cv_name: "我的渲染简历".to_owned(),
+        cv_name: request.cv_name.to_owned(),
         remark: "".to_owned(),
         created_time: get_current_millisecond(),
         updated_time: get_current_millisecond(),
