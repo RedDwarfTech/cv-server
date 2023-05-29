@@ -1,5 +1,7 @@
 use crate::model::request::cv::gen_request::GenRequest;
-use crate::service::cv::gen_service::{create_gen_task, cv_gen_list_render, cv_gen_page};
+use crate::service::cv::gen_service::{
+    create_gen_task, cv_gen_list_render, cv_gen_page, del_gen_impl,
+};
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
     service::cv::gen_service::{cv_gen_list, update_gen_result},
@@ -7,7 +9,7 @@ use crate::{
 use okapi::openapi3::OpenApi;
 use rocket::response::content;
 use rocket::serde::json::Json;
-use rocket::{get, post, put};
+use rocket::{delete, get, post, put};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::common::util::model_convert::box_error_rest_response;
 use rust_wheel::{
@@ -20,7 +22,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         flush_render_result,
         submit_gen_task,
         get_list_for_render,
-        page
+        page,
+        del_gen
     ]
 }
 
@@ -82,9 +85,16 @@ pub fn get_list_for_render(cv_name: Option<String>) -> content::RawJson<String> 
 /// 更新简历生成结果
 #[openapi(tag = "更新简历生成结果")]
 #[put("/v1/result", data = "<request>")]
-pub fn flush_render_result(
-    request: Json<RenderResultRequest>
-) -> content::RawJson<String> {
+pub fn flush_render_result(request: Json<RenderResultRequest>) -> content::RawJson<String> {
     let gen_cv = update_gen_result(request);
+    return box_rest_response(gen_cv);
+}
+
+///
+/// 删除简历生成结果
+#[openapi(tag = "删除简历生成结果")]
+#[delete("/v1/<id>")]
+pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let gen_cv = del_gen_impl(&id, &login_user_info);
     return box_rest_response(gen_cv);
 }

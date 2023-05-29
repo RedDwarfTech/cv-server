@@ -3,7 +3,7 @@ use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvGen, CvGenAdd};
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
-use diesel::{ExpressionMethods, QueryDsl, TextExpressionMethods};
+use diesel::{ExpressionMethods, QueryDsl, TextExpressionMethods, BoolExpressionMethods};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
@@ -99,4 +99,20 @@ pub fn update_gen_result(request: Json<RenderResultRequest>) {
         ))
         .get_result::<CvGen>(&mut get_connection())
         .expect("unable to update ren result");
+}
+
+pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo)  -> bool{
+    use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id.eq(gen_id)
+    .and(crate::model::diesel::cv::cv_schema::cv_gen::user_id.eq(login_user_info.userId));
+    let delete_result =
+        diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
+    match delete_result {
+        Ok(_v) => {
+            return true;
+        }
+        Err(_) => {
+            return false;
+        }
+    }
 }
