@@ -26,6 +26,24 @@ pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo)
     return user_bill_books;
 }
 
+pub fn cv_gen_page(filter_name: Option<String>, login_user_info: &LoginUserInfo) -> Vec<CvGen> {
+    use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
+    let mut query = cv_gen_table::table.into_boxed::<diesel::pg::Pg>();
+    if let Some(some_filter_name) = &filter_name {
+        query = query.filter(cv_gen_table::cv_name.like(format!(
+            "{}{}{}",
+            "%",
+            some_filter_name.as_str(),
+            "%"
+        )));
+    }
+    query = query.filter(cv_gen_table::user_id.eq(login_user_info.userId));
+    let user_bill_books = query
+        .load::<CvGen>(&mut get_connection())
+        .expect("error get user gen record");
+    return user_bill_books;
+}
+
 pub fn create_gen_task(
     request: &Json<GenRequest>,
     login_user_info: &LoginUserInfo,

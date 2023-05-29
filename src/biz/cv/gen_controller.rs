@@ -1,5 +1,5 @@
 use crate::model::request::cv::gen_request::GenRequest;
-use crate::service::cv::gen_service::{create_gen_task, cv_gen_list_render};
+use crate::service::cv::gen_service::{create_gen_task, cv_gen_list_render, cv_gen_page};
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
     service::cv::gen_service::{cv_gen_list, update_gen_result},
@@ -20,7 +20,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         flush_render_result,
         submit_gen_task,
         get_list_for_render,
-        
+        page
     ]
 }
 
@@ -31,6 +31,16 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 #[get("/v1/list?<cv_name>")]
 pub fn list(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = cv_gen_list(cv_name.clone(), &login_user_info);
+    return box_rest_response(gen_cv);
+}
+
+/// # 分页查询简历生成记录
+///
+/// 分页查询简历生成记录
+#[openapi(tag = "简历生成记录分页")]
+#[get("/v1/page?<cv_name>")]
+pub fn page(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let gen_cv = cv_gen_page(cv_name.clone(), &login_user_info);
     return box_rest_response(gen_cv);
 }
 
