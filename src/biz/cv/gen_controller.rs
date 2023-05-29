@@ -83,9 +83,8 @@ pub fn get_list_for_render(cv_name: Option<String>) -> content::RawJson<String> 
 #[openapi(tag = "更新简历生成结果")]
 #[put("/v1/result", data = "<request>")]
 pub fn flush_render_result(
-    request: Json<RenderResultRequest>,
-    login_user_info: LoginUserInfo,
+    request: Json<RenderResultRequest>
 ) -> content::RawJson<String> {
-    let gen_cv = update_gen_result(request, &login_user_info);
+    let gen_cv = update_gen_result(request);
     return box_rest_response(gen_cv);
 }

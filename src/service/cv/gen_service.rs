@@ -3,7 +3,7 @@ use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvGen, CvGenAdd};
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, TextExpressionMethods};
+use diesel::{ExpressionMethods, QueryDsl, TextExpressionMethods};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
@@ -88,13 +88,15 @@ pub fn cv_gen_list_render(filter_name: Option<String>) -> Vec<CvGen> {
     return user_bill_books;
 }
 
-pub fn update_gen_result(request: Json<RenderResultRequest>, login_user_info: &LoginUserInfo) {
+pub fn update_gen_result(request: Json<RenderResultRequest>) {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
-    let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id
-        .eq(request.id)
-        .and(crate::model::diesel::cv::cv_schema::cv_gen::user_id.eq(login_user_info.userId));
+    let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id.eq(request.id);
     diesel::update(cv_gen.filter(predicate))
-        .set((gen_status.eq(&request.gen_status), (path.eq(request.path.to_string()))))
+        .set((
+            gen_status.eq(&request.gen_status),
+            (path.eq(request.path.to_string())),
+            (updated_time.eq(get_current_millisecond())),
+        ))
         .get_result::<CvGen>(&mut get_connection())
         .expect("unable to update ren result");
 }
