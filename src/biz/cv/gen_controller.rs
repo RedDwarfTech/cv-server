@@ -1,6 +1,6 @@
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::service::cv::gen_service::{
-    create_gen_task, cv_gen_list_render, cv_gen_page, del_gen_impl,
+    create_gen_task, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task,
 };
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
@@ -23,7 +23,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         submit_gen_task,
         get_list_for_render,
         page,
-        del_gen
+        del_gen,
+        pick_one_task
     ]
 }
 
@@ -35,6 +36,23 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 pub fn list(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = cv_gen_list(cv_name.clone(), &login_user_info);
     return box_rest_response(gen_cv);
+}
+
+/// # 查询一个简历生成记录
+///
+/// 查询一个简历生成记录
+#[openapi(tag = "查询一个简历生成记录")]
+#[get("/v1/pick")]
+pub fn pick_one_task() -> content::RawJson<String> {
+    let gen_cv = pick_task();
+    match gen_cv {
+        Ok(gen_cv) => {
+            return box_rest_response(gen_cv);
+        }
+        Err(e) => {
+            return box_error_rest_response("", "error".to_string(), e.to_string());
+        }
+    }
 }
 
 /// # 分页查询简历生成记录
@@ -98,7 +116,7 @@ pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Stri
     let gen_cv = del_gen_impl(&id, &login_user_info);
     if gen_cv {
         return box_rest_response(id);
-    }else{
-        return box_error_rest_response("-1","500".to_string(),"failed".to_string());
+    } else {
+        return box_error_rest_response("-1", "500".to_string(), "failed".to_string());
     }
 }
