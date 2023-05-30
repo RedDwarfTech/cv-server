@@ -7,10 +7,12 @@ use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::edu::cv_edu_resp::CvEduResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
-use crate::service::cv::edu::edu_service::{del_edu_items, get_edu_list, get_render_edu_list};
-use crate::service::cv::work::work_exp_service::del_work_items;
+use crate::model::response::cv::work::cv_work_resp::CvWorkResp;
+use crate::service::cv::edu::edu_service::{del_edu_items, get_edu_list};
+use crate::service::cv::work::work_exp_service::{del_work_items, get_work_list};
+use diesel::query_dsl::methods::BoxedDsl;
 use diesel::result::Error;
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, Connection};
+use diesel::{BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
@@ -44,28 +46,25 @@ pub fn get_cv_summary(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvM
     }
 }
 
-pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Result<&str,Error> {
+pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Result<&str, Error> {
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
     let mut connection = get_connection();
     let result = connection.transaction(|connection| {
         use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
-            let predicate = cv_main_table::user_id
-                .eq(login_user_info.userId)
-                .and(cv_main_table::id.eq(cv_id));
-            let delete_result =
-                diesel::delete(cv_main.filter(predicate)).execute(connection);
-            match delete_result {
-                Ok(_v) => {
-                    del_edu_items(&cv_id, login_user_info);
-                    del_work_items(&cv_id, login_user_info);
-                    Ok("")
-                }
-                Err(e) => {
-                    diesel::result::QueryResult::Err(e)
-                },
+        let predicate = cv_main_table::user_id
+            .eq(login_user_info.userId)
+            .and(cv_main_table::id.eq(cv_id));
+        let delete_result = diesel::delete(cv_main.filter(predicate)).execute(connection);
+        match delete_result {
+            Ok(_v) => {
+                del_edu_items(&cv_id, login_user_info);
+                del_work_items(&cv_id, login_user_info);
+                Ok("")
             }
+            Err(e) => diesel::result::QueryResult::Err(e),
+        }
     });
-    return result; 
+    return result;
 }
 
 pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMainResp> {
@@ -76,26 +75,21 @@ pub fn get_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Option<CvMai
             .eq(login_user_info.userId)
             .and(cv_main_table::id.eq(cv_id)),
     );
-    let cv_result: Vec<CvMain> = query
-        .load::<CvMain>(&mut get_connection())
-        .expect("error get cv");
-    if cv_result.is_empty() {
-        return None;
-    }
-    // edu
-    let edues = get_edu_list(&cv_id,login_user_info);
-    let section_resp = get_section_by_cv(cv_id);
-    let edu_resp: Vec<CvEduResp>= map_entity(edues);
-    let cv_resp = CvMainResp::from(&cv_result.get(0).unwrap(), section_resp, edu_resp);
-    return Some(cv_resp);
+    return get_cv_info(cv_id, query);
 }
 
 pub fn get_render_cv_by_id(cv_id: i64) -> Option<CvMainResp> {
     use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
-    let mut query = cv_main_table::table.into_boxed::<diesel::pg::Pg>();
-    query = query.filter(
-        cv_main_table::id.eq(cv_id),
-    );
+    let mut query: <cv_main_table::table as BoxedDsl<diesel::pg::Pg>>::Output =
+        cv_main_table::table.into_boxed::<diesel::pg::Pg>();
+    query = query.filter(cv_main_table::id.eq(cv_id));
+    return get_cv_info(cv_id, query);
+}
+
+pub fn get_cv_info(
+    cv_id: i64,
+    query: <crate::model::diesel::cv::cv_schema::cv_main::table as BoxedDsl<diesel::pg::Pg>>::Output,
+) -> Option<CvMainResp> {
     let cv_result: Vec<CvMain> = query
         .load::<CvMain>(&mut get_connection())
         .expect("error get cv");
@@ -103,10 +97,18 @@ pub fn get_render_cv_by_id(cv_id: i64) -> Option<CvMainResp> {
         return None;
     }
     // edu
-    let edues = get_render_edu_list(&cv_id);
+    let edues = get_edu_list(&cv_id);
+    // work
+    let works_list = get_work_list(&cv_id);
     let section_resp = get_section_by_cv(cv_id);
-    let edu_resp: Vec<CvEduResp>= map_entity(edues);
-    let cv_resp = CvMainResp::from(&cv_result.get(0).unwrap(), section_resp, edu_resp);
+    let edu_resp: Vec<CvEduResp> = map_entity(edues);
+    let works_resp: Vec<CvWorkResp> = map_entity(works_list);
+    let cv_resp = CvMainResp::from(
+        &cv_result.get(0).unwrap(),
+        section_resp,
+        edu_resp,
+        works_resp,
+    );
     return Some(cv_resp);
 }
 

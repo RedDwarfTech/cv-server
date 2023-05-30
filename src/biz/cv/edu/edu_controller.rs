@@ -1,5 +1,5 @@
 use crate::model::request::cv::edu::edu_request::EduRequest;
-use crate::service::cv::edu::edu_service::{add_edu, get_edu_list, del_edu_item};
+use crate::service::cv::edu::edu_service::{add_edu, del_edu_item, get_ui_edu_list};
 use okapi::openapi3::OpenApi;
 use rocket::{get, delete};
 use rocket::serde::json::Json;
@@ -30,7 +30,7 @@ pub fn add(request: Json<EduRequest>, login_user_info: LoginUserInfo) -> content
 #[openapi(tag = "教育信息")]
 #[get("/v1?<cv_id>")]
 pub fn edu_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let cv_edu_list = get_edu_list(&cv_id, &login_user_info);
+    let cv_edu_list = get_ui_edu_list(&cv_id, &login_user_info);
     return box_rest_response(cv_edu_list);
 }
 

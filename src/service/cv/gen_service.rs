@@ -38,6 +38,9 @@ pub fn pick_task() -> Result<CvGen, diesel::result::Error> {
         let user_bill_books = query
             .load::<CvGen>(connection)
             .expect("error get cv gen record");
+        if user_bill_books.is_empty() {
+            return Err(diesel::result::Error::NotFound);
+        }
         let updated_rows = diesel::update(cv_gen.find(user_bill_books[0].id))
             .set(gen_status.eq(1))
             .get_result::<CvGen>(connection);

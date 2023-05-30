@@ -39,18 +39,28 @@ pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) ->
             print!("ok")
         }
     }
-    let cv_edu_info: Vec<CvWorkExp> = get_work_list(&request.cv_id, &login_user_info);
+    let cv_edu_info: Vec<CvWorkExp> = get_ui_work_list(&request.cv_id, &login_user_info);
     return cv_edu_info;
 }
 
-pub fn get_work_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvWorkExp> {
+pub fn get_ui_work_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvWorkExp> {
     use crate::model::diesel::cv::cv_schema::cv_work_exp as cv_work_table;
     let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_work_table::user_id.eq(login_user_info.userId));
     query = query.filter(cv_work_table::cv_id.eq(cv_id));
     let cvs = query
         .load::<CvWorkExp>(&mut get_connection())
-        .expect("error get edu list");
+        .expect("error get work list");
+    return cvs;
+}
+
+pub fn get_work_list(cv_id: &i64) -> Vec<CvWorkExp> {
+    use crate::model::diesel::cv::cv_schema::cv_work_exp as cv_work_table;
+    let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
+    query = query.filter(cv_work_table::cv_id.eq(cv_id));
+    let cvs = query
+        .load::<CvWorkExp>(&mut get_connection())
+        .expect("error get work list");
     return cvs;
 }
 

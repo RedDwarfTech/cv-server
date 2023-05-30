@@ -1,5 +1,5 @@
 use crate::model::request::cv::work::work_request::WorkRequest;
-use crate::service::cv::work::work_exp_service::{add_work, get_work_list, del_work_item};
+use crate::service::cv::work::work_exp_service::{add_work, del_work_item, get_ui_work_list};
 use okapi::openapi3::OpenApi;
 use rocket::{get, delete};
 use rocket::serde::json::Json;
@@ -30,7 +30,7 @@ pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> conten
 #[openapi(tag = "工作经验")]
 #[get("/v1?<cv_id>")]
 pub fn work_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let cv_edu_list = get_work_list(&cv_id, &login_user_info);
+    let cv_edu_list = get_ui_work_list(&cv_id, &login_user_info);
     return box_rest_response(cv_edu_list);
 }
 

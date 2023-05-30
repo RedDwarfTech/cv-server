@@ -42,22 +42,22 @@ pub fn add_edu(request: &Json<EduRequest>, login_user_info: &LoginUserInfo) -> V
             print!("ok")
         }
     }
-    let cv_edu_info = get_edu_list(&request.cv_id, &login_user_info);
+    let cv_edu_info = get_edu_list(&request.cv_id);
     return cv_edu_info;
 }
 
-pub fn get_edu_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvEdu> {
+pub fn get_ui_edu_list(cv_id: &i64,login_user_info: &LoginUserInfo) -> Vec<CvEdu> {
     use crate::model::diesel::cv::cv_schema::cv_edu as cv_edu_table;
     let mut query = cv_edu_table::table.into_boxed::<diesel::pg::Pg>();
-    query = query.filter(cv_edu_table::user_id.eq(login_user_info.userId));
     query = query.filter(cv_edu_table::cv_id.eq(cv_id));
+    query = query.filter(cv_edu_table::user_id.eq(login_user_info.userId));
     let cvs = query
         .load::<CvEdu>(&mut get_connection())
         .expect("error get edu list");
     return cvs;
 }
 
-pub fn get_render_edu_list(cv_id: &i64) -> Vec<CvEdu> {
+pub fn get_edu_list(cv_id: &i64) -> Vec<CvEdu> {
     use crate::model::diesel::cv::cv_schema::cv_edu as cv_edu_table;
     let mut query = cv_edu_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_edu_table::cv_id.eq(cv_id));
