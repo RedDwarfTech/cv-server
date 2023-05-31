@@ -105,6 +105,7 @@ table! {
         work_start -> Nullable<Date>,
         work_end -> Nullable<Date>,
         user_id -> Int8,
+        duty -> Nullable<Varchar>,
     }
 }
 

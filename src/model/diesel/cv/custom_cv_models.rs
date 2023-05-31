@@ -150,6 +150,7 @@ pub struct CvWorkExp {
     pub work_start: Option<NaiveDate>,
     pub work_end: Option<NaiveDate>,
     pub user_id: i64,
+    pub duty: Option<String>,
 }
 
 
@@ -165,4 +166,5 @@ pub struct CvWorkExpAdd {
     pub work_start: Option<NaiveDate>,
     pub work_end: Option<NaiveDate>,
     pub user_id: i64,
+    pub duty: Option<String>,
 }

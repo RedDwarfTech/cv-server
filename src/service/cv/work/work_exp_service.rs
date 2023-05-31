@@ -24,6 +24,7 @@ pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) ->
         company: request.company.clone(),
         job: Some(request.job.clone()),
         city: Some(request.city.to_string()),
+        duty: request.duty.clone(),
     };
     let result = diesel::insert_into(cv_work_exp)
         .values(&cv_edu_model)

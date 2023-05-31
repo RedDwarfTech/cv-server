@@ -13,4 +13,5 @@ pub struct WorkRequest {
     pub work_start: String,
     pub work_end: String,
     pub id: Option<i64>,
+    pub duty: Option<String>,
 }
