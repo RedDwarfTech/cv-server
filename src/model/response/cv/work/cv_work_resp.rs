@@ -30,7 +30,7 @@ impl From<&CvWorkExp> for CvWorkResp {
             city: s.city.to_owned(),
             work_start: Some(s.work_start.unwrap().to_string()),
             work_end: Some(s.work_end.unwrap().to_string()),
-            duty: Some(s.duty.as_ref().unwrap().to_string()),
+            duty: s.duty.clone(),
         }
     }
 }
