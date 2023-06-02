@@ -163,6 +163,9 @@ pub fn update_cv_main(
                 email.eq(&request.email),
                 birthday.eq(&request.birthday),
                 cv_name.eq(&request.cv_name),
+                stackoverflow.eq(&request.stackoverflow),
+                github.eq(&request.github),
+                blog.eq(&request.blog)
             ))
             .get_result::<CvMain>(&mut get_connection())
             .expect("unable to update ren result");

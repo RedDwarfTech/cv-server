@@ -14,4 +14,7 @@ pub struct EditMainRequest {
     pub job: String,
     pub workplace: String,
     pub cv_name: String,
+    pub stackoverflow: Option<String>,
+    pub github: Option<String>,
+    pub blog: Option<String>,
 }
