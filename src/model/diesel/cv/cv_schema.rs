@@ -44,6 +44,9 @@ table! {
         email -> Nullable<Varchar>,
         job -> Nullable<Varchar>,
         workplace -> Nullable<Varchar>,
+        stackoverflow -> Nullable<Varchar>,
+        github -> Nullable<Varchar>,
+        blog -> Nullable<Varchar>,
     }
 }
 

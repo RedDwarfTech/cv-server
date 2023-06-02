@@ -74,6 +74,9 @@ pub struct CvMain {
     pub email: Option<String>,
     pub job: Option<String>,
     pub workplace: Option<String>,
+    pub stackoverflow: Option<String>,
+    pub github: Option<String>,
+    pub blog: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
