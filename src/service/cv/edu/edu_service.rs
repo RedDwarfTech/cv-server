@@ -8,7 +8,10 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
-pub fn add_edu(request: &Json<EduRequest>, login_user_info: &LoginUserInfo) -> Vec<CvEdu> {
+pub fn add_edu(
+    request: &Json<EduRequest>,
+    login_user_info: &LoginUserInfo,
+) -> Result<CvEdu, diesel::result::Error> {
     use crate::model::diesel::cv::cv_schema::cv_edu::dsl::*;
     let admission_dt =
         NaiveDate::parse_from_str(&request.admission.to_string(), "%Y-%m-%d").unwrap();
@@ -26,28 +29,39 @@ pub fn add_edu(request: &Json<EduRequest>, login_user_info: &LoginUserInfo) -> V
         graduation: Some(graduation_dt),
         city: request.city.to_owned(),
     };
-    let result = diesel::insert_into(cv_edu)
-        .values(&cv_edu_model)
-        .on_conflict(id)
-        .do_update()
-        .set((
-            edu_addr.eq(&request.edu_addr),
-            (updated_time.eq(get_current_millisecond())),
-        ))
-        .get_result::<CvEdu>(&mut get_connection());
-    match result {
-        Err(_) => {
-            print!("error")
-        }
-        Ok(_) => {
-            print!("ok")
-        }
+    if request.id.is_some() {
+        let predicate = crate::model::diesel::cv::cv_schema::cv_edu::id.eq(request.id.unwrap());
+        let update_result = diesel::update(cv_edu.filter(predicate))
+            .set((
+                edu_addr.eq(&request.edu_addr),
+                major.eq(&request.major),
+                admission.eq(admission_dt),
+                graduation.eq(graduation_dt),
+                degree.eq(&request.degree),
+                city.eq(&request.city),
+            ))
+            .get_result::<CvEdu>(&mut get_connection());
+        return update_result;
+    } else {
+        let result = diesel::insert_into(cv_edu)
+            .values(&cv_edu_model)
+            .on_conflict(id)
+            .do_update()
+            .set((
+                edu_addr.eq(&request.edu_addr),
+                (updated_time.eq(get_current_millisecond())),
+                major.eq(&request.major),
+                admission.eq(admission_dt),
+                graduation.eq(graduation_dt),
+                degree.eq(&request.degree),
+                city.eq(&request.city),
+            ))
+            .get_result::<CvEdu>(&mut get_connection());
+        return result;
     }
-    let cv_edu_info = get_edu_list(&request.cv_id);
-    return cv_edu_info;
 }
 
-pub fn get_ui_edu_list(cv_id: &i64,login_user_info: &LoginUserInfo) -> Vec<CvEdu> {
+pub fn get_ui_edu_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvEdu> {
     use crate::model::diesel::cv::cv_schema::cv_edu as cv_edu_table;
     let mut query = cv_edu_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_edu_table::cv_id.eq(cv_id));
