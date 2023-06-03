@@ -137,6 +137,7 @@ pub struct CvEduAdd {
     pub user_id: i64,
     pub degree: Option<String>,
     pub major: Option<String>,
+    pub city: Option<String>,
     pub admission: Option<NaiveDate>,
     pub graduation: Option<NaiveDate>,
 }

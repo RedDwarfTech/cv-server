@@ -12,5 +12,6 @@ pub struct EduRequest {
     pub major: String,
     pub admission: String,
     pub graduation: String,
+    pub city: Option<String>,
     pub id: Option<i64>,
 }

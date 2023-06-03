@@ -21,9 +21,10 @@ pub fn add_edu(request: &Json<EduRequest>, login_user_info: &LoginUserInfo) -> V
         cv_id: request.cv_id,
         user_id: login_user_info.userId,
         degree: Some(request.degree.to_string()),
-        major: Some(request.graduation.to_string()),
+        major: Some(request.major.to_string()),
         admission: Some(admission_dt),
         graduation: Some(graduation_dt),
+        city: request.city.to_owned(),
     };
     let result = diesel::insert_into(cv_edu)
         .values(&cv_edu_model)
