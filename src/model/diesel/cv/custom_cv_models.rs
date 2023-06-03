@@ -124,6 +124,7 @@ pub struct CvEdu {
     pub admission: Option<NaiveDate>,
     pub graduation: Option<NaiveDate>,
     pub user_id: i64,
+    pub city: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

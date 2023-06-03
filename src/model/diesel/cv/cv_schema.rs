@@ -10,6 +10,7 @@ table! {
         admission -> Nullable<Date>,
         graduation -> Nullable<Date>,
         user_id -> Int8,
+        city -> Nullable<Varchar>,
     }
 }
 
