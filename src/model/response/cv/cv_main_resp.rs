@@ -16,6 +16,9 @@ pub struct CvMainResp {
     pub birthday: Option<String>,
     pub phone: Option<String>,
     pub email: Option<String>,
+    pub stackoverflow: Option<String>,
+    pub github: Option<String>,
+    pub blog: Option<String>,
     pub cv_section: Vec<CvSectionResp>,
     pub edu: Vec<CvEduResp>,
     pub work: Vec<CvWorkResp>,
@@ -42,7 +45,10 @@ impl CvMainResp {
             email: cv_main.email.to_owned(),
             cv_section: sections,
             edu: edues,
-            work: works
+            work: works,
+            stackoverflow: cv_main.stackoverflow.to_owned(),
+            github: cv_main.github.to_owned(),
+            blog: cv_main.blog.to_owned(),
         }
     }
 }
