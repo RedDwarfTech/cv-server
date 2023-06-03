@@ -16,7 +16,7 @@ pub fn add_edu(
     let admission_dt =
         NaiveDate::parse_from_str(&request.admission.to_string(), "%Y-%m-%d").unwrap();
     let graduation_dt =
-        NaiveDate::parse_from_str(&request.admission.to_string(), "%Y-%m-%d").unwrap();
+        NaiveDate::parse_from_str(&request.graduation.to_string(), "%Y-%m-%d").unwrap();
     let cv_edu_model = CvEduAdd {
         edu_addr: request.edu_addr.to_string(),
         created_time: get_current_millisecond(),
