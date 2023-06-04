@@ -59,7 +59,7 @@ table! {
         updated_time -> Int8,
         cv_id -> Int8,
         job -> Nullable<Varchar>,
-        city -> Nullable<Varchar>,
+        company -> Nullable<Varchar>,
         work_start -> Nullable<Date>,
         work_end -> Nullable<Date>,
         user_id -> Int8,

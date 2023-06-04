@@ -198,3 +198,34 @@ pub struct CvSkillAdd {
     pub user_id: i64,
     pub memo: Option<String>,
 }
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = cv_project_exp)]
+pub struct CvProjectExp {
+    pub id: i64,
+    pub name: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: i64,
+    pub job: Option<String>,
+    pub company: Option<String>,
+    pub work_start: Option<NaiveDate>,
+    pub work_end: Option<NaiveDate>,
+    pub user_id: i64,
+    pub duty: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = cv_project_exp)]
+pub struct CvProjectExpAdd {
+    pub name: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: i64,
+    pub job: Option<String>,
+    pub company: Option<String>,
+    pub work_start: Option<NaiveDate>,
+    pub work_end: Option<NaiveDate>,
+    pub user_id: i64,
+    pub duty: Option<String>,
+}

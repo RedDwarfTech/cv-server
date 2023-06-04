@@ -1,8 +1,10 @@
-use crate::model::request::cv::work::work_request::WorkRequest;
-use crate::service::cv::project::project_exp_service::{add_project, get_ui_project_list, del_project_item};
+use crate::model::request::cv::project::project_request::ProjectRequest;
+use crate::service::cv::project::project_exp_service::{
+    add_project, del_project_item, get_ui_project_list,
+};
 use okapi::openapi3::OpenApi;
-use rocket::{get, delete};
 use rocket::serde::json::Json;
+use rocket::{delete, get};
 use rocket::{post, response::content};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::common::util::model_convert::box_error_rest_response;
@@ -19,7 +21,10 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 项目经验
 #[openapi(tag = "项目经验")]
 #[post("/v1", data = "<request>")]
-pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn add(
+    request: Json<ProjectRequest>,
+    login_user_info: LoginUserInfo,
+) -> content::RawJson<String> {
     let cv_edu_list = add_project(&request, &login_user_info);
     match cv_edu_list {
         Ok(work) => {
@@ -50,7 +55,7 @@ pub fn del_project_exp(work_id: i64, login_user_info: LoginUserInfo) -> content:
     let cv_edu_list = del_project_item(&work_id, &login_user_info);
     if cv_edu_list {
         return box_rest_response(work_id);
-    }else{
-        return box_error_rest_response("-1","500".to_string(),"failed".to_string());
+    } else {
+        return box_error_rest_response("-1", "500".to_string(), "failed".to_string());
     }
 }
