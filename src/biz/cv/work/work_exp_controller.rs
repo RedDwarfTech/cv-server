@@ -21,12 +21,19 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 #[post("/v1", data = "<request>")]
 pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = add_work(&request, &login_user_info);
-    return box_rest_response(cv_edu_list);
+    match cv_edu_list {
+        Ok(work) => {
+            return box_rest_response(work);
+        }
+        Err(e) => {
+            return box_error_rest_response("-1", "500".to_string(), e.to_string());
+        }
+    }
 }
 
-/// # 获取工作经验
+/// # 获取简历工作经验列表
 ///
-/// 获取工作经验
+/// 获取简历工作经验列表
 #[openapi(tag = "工作经验")]
 #[get("/v1?<cv_id>")]
 pub fn work_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {

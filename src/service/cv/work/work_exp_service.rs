@@ -8,7 +8,7 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
-pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) -> Vec<CvWorkExp> {
+pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) -> Result<CvWorkExp, diesel::result::Error> {
     use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
     let admission_dt =
         NaiveDate::parse_from_str(&request.work_start.to_string(), "%Y-%m-%d").unwrap();
@@ -26,22 +26,38 @@ pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) ->
         city: Some(request.city.to_string()),
         duty: request.duty.clone(),
     };
-    let result = diesel::insert_into(cv_work_exp)
-        .values(&cv_edu_model)
-        .on_conflict(id)
-        .do_update()
-        .set(((updated_time.eq(get_current_millisecond())),))
-        .get_result::<CvWorkExp>(&mut get_connection());
-    match result {
-        Err(_) => {
-            print!("error")
-        }
-        Ok(_) => {
-            print!("ok")
-        }
+
+    if request.id.is_some() {
+        let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::id.eq(request.id.unwrap());
+        let update_result = diesel::update(cv_work_exp.filter(predicate))
+            .set((
+                updated_time.eq(get_current_millisecond()),
+                duty.eq(request.duty.clone()),
+                company.eq(request.company.clone()),
+                job.eq(request.job.clone()),
+                city.eq(request.city.clone()),
+                work_start.eq(admission_dt),
+                work_end.eq(graduation_dt),
+            ))
+            .get_result::<CvWorkExp>(&mut get_connection());
+        return update_result;
+    } else {
+        let result = diesel::insert_into(cv_work_exp)
+            .values(&cv_edu_model)
+            .on_conflict(id)
+            .do_update()
+            .set((
+                updated_time.eq(get_current_millisecond()),
+                duty.eq(request.duty.clone()),
+                company.eq(request.company.clone()),
+                job.eq(request.job.clone()),
+                city.eq(request.city.clone()),
+                work_start.eq(admission_dt),
+                work_end.eq(graduation_dt),
+            ))
+            .get_result::<CvWorkExp>(&mut get_connection());
+        return result ;
     }
-    let cv_edu_info: Vec<CvWorkExp> = get_ui_work_list(&request.cv_id, &login_user_info);
-    return cv_edu_info;
 }
 
 pub fn get_ui_work_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvWorkExp> {
