@@ -61,7 +61,7 @@ pub fn add_project(
 }
 
 pub fn get_ui_project_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvProjectExp> {
-    use crate::model::diesel::cv::cv_schema::cv_work_exp as cv_work_table;
+    use crate::model::diesel::cv::cv_schema::cv_project_exp as cv_work_table;
     let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_work_table::user_id.eq(login_user_info.userId));
     query = query.filter(cv_work_table::cv_id.eq(cv_id));
@@ -72,7 +72,7 @@ pub fn get_ui_project_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<
 }
 
 pub fn _get_project_list(cv_id: &i64) -> Vec<CvProjectExp> {
-    use crate::model::diesel::cv::cv_schema::cv_work_exp as cv_work_table;
+    use crate::model::diesel::cv::cv_schema::cv_project_exp as cv_work_table;
     let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_work_table::cv_id.eq(cv_id));
     let cvs = query
@@ -82,12 +82,12 @@ pub fn _get_project_list(cv_id: &i64) -> Vec<CvProjectExp> {
 }
 
 pub fn del_project_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool {
-    use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
-    let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::id
+    use crate::model::diesel::cv::cv_schema::cv_project_exp::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_project_exp::id
         .eq(item_id)
-        .and(crate::model::diesel::cv::cv_schema::cv_work_exp::user_id.eq(login_user_info.userId));
+        .and(crate::model::diesel::cv::cv_schema::cv_project_exp::user_id.eq(login_user_info.userId));
     let delete_result =
-        diesel::delete(cv_work_exp.filter(predicate)).execute(&mut get_connection());
+        diesel::delete(cv_project_exp.filter(predicate)).execute(&mut get_connection());
     match delete_result {
         Ok(_v) => {
             return true;
@@ -99,12 +99,12 @@ pub fn del_project_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool 
 }
 
 pub fn _del_project_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
-    use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
-    let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::cv_id
+    use crate::model::diesel::cv::cv_schema::cv_project_exp::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_project_exp::cv_id
         .eq(del_cv_id)
-        .and(crate::model::diesel::cv::cv_schema::cv_work_exp::user_id.eq(login_user_info.userId));
+        .and(crate::model::diesel::cv::cv_schema::cv_project_exp::user_id.eq(login_user_info.userId));
     let delete_result =
-        diesel::delete(cv_work_exp.filter(predicate)).execute(&mut get_connection());
+        diesel::delete(cv_project_exp.filter(predicate)).execute(&mut get_connection());
     match delete_result {
         Ok(_v) => {
             return true;
