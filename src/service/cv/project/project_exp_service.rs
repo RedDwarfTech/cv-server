@@ -25,9 +25,9 @@ pub fn add_project(
         work_start: Some(admission_dt),
         work_end: Some(graduation_dt),
         company: Some(request.company.clone()),
-        job: Some(request.job.clone()),
         duty: request.duty.clone(),
         name: request.name.clone(),
+        job: Some("ddd".to_string()),
     };
 
     if request.id.is_some() {
@@ -38,7 +38,6 @@ pub fn add_project(
                 updated_time.eq(get_current_millisecond()),
                 duty.eq(request.duty.clone()),
                 company.eq(request.company.clone()),
-                job.eq(request.job.clone()),
                 work_start.eq(admission_dt),
                 work_end.eq(graduation_dt),
             ))
@@ -53,7 +52,6 @@ pub fn add_project(
                 updated_time.eq(get_current_millisecond()),
                 duty.eq(request.duty.clone()),
                 company.eq(request.company.clone()),
-                job.eq(request.job.clone()),
                 work_start.eq(admission_dt),
                 work_end.eq(graduation_dt),
             ))
