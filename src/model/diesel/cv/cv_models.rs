@@ -21,6 +21,7 @@ pub struct CvEdu {
     pub admission: Option<NaiveDate>,
     pub graduation: Option<NaiveDate>,
     pub user_id: i64,
+    pub city: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -55,6 +56,25 @@ pub struct CvMain {
     pub email: Option<String>,
     pub job: Option<String>,
     pub workplace: Option<String>,
+    pub stackoverflow: Option<String>,
+    pub github: Option<String>,
+    pub blog: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = "cv_project_exp")]
+pub struct CvProjectExp {
+    pub id: i64,
+    pub name: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: i64,
+    pub job: Option<String>,
+    pub city: Option<String>,
+    pub work_start: Option<NaiveDate>,
+    pub work_end: Option<NaiveDate>,
+    pub user_id: i64,
+    pub duty: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -90,6 +110,19 @@ pub struct CvSectionType {
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = "cv_skills")]
+pub struct CvSkill {
+    pub id: i64,
+    pub name: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: i64,
+    pub level: Option<String>,
+    pub user_id: i64,
+    pub memo: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[diesel(table_name = "cv_template")]
 pub struct CvTemplate {
     pub id: i64,
@@ -113,8 +146,9 @@ pub struct CvWorkExp {
     pub cv_id: i64,
     pub job: Option<String>,
     pub city: Option<String>,
-    pub admission: Option<NaiveDate>,
-    pub graduation: Option<NaiveDate>,
+    pub work_start: Option<NaiveDate>,
+    pub work_end: Option<NaiveDate>,
     pub user_id: i64,
+    pub duty: Option<String>,
 }
 

@@ -52,6 +52,22 @@ table! {
 }
 
 table! {
+    cv_project_exp (id) {
+        id -> Int8,
+        name -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        cv_id -> Int8,
+        job -> Nullable<Varchar>,
+        city -> Nullable<Varchar>,
+        work_start -> Nullable<Date>,
+        work_end -> Nullable<Date>,
+        user_id -> Int8,
+        duty -> Nullable<Varchar>,
+    }
+}
+
+table! {
     cv_section (id) {
         id -> Int8,
         section_abbr -> Varchar,
@@ -80,6 +96,19 @@ table! {
         created_time -> Int8,
         updated_time -> Int8,
         item_abbr -> Nullable<Varchar>,
+    }
+}
+
+table! {
+    cv_skills (id) {
+        id -> Int8,
+        name -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        cv_id -> Int8,
+        level -> Nullable<Varchar>,
+        user_id -> Int8,
+        memo -> Nullable<Varchar>,
     }
 }
 
@@ -117,9 +146,11 @@ allow_tables_to_appear_in_same_query!(
     cv_edu,
     cv_gen,
     cv_main,
+    cv_project_exp,
     cv_section,
     cv_section_content,
     cv_section_type,
+    cv_skills,
     cv_template,
     cv_work_exp,
 );

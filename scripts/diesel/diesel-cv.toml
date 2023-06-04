@@ -12,6 +12,8 @@ filter = { only_tables = [
     "cv_section_content",
     "cv_section_type",
     "cv_edu",
-    "cv_work_exp"
+    "cv_work_exp",
+    "cv_skills",
+    "cv_project_exp"
 ] }
 
