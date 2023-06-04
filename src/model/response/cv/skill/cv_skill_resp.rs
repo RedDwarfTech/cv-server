@@ -9,6 +9,8 @@ pub struct CvSkillResp {
     pub updated_time: i64,
     pub cv_id: i64,
     pub user_id: i64,
+    pub name: String,
+    pub memo: Option<String>
 }
 
 impl From<&CvSkill> for CvSkillResp {
@@ -19,6 +21,8 @@ impl From<&CvSkill> for CvSkillResp {
             updated_time: s.updated_time,
             cv_id: s.cv_id,
             user_id: s.user_id,
+            name: s.name.clone(),
+            memo: s.memo.clone(),
         }
     }
 }
