@@ -58,7 +58,7 @@ pub fn get_ui_skill_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<Cv
     return cvs;
 }
 
-pub fn _get_skill_list(cv_id: &i64) -> Vec<CvSkill> {
+pub fn get_skill_list(cv_id: &i64) -> Vec<CvSkill> {
     use crate::model::diesel::cv::cv_schema::cv_skills as cv_work_table;
     let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_work_table::cv_id.eq(cv_id));

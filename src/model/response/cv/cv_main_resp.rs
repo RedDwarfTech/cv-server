@@ -1,4 +1,7 @@
-use super::{cv_section_resp::CvSectionResp, edu::cv_edu_resp::CvEduResp, work::cv_work_resp::CvWorkResp};
+use super::{
+    cv_section_resp::CvSectionResp, edu::cv_edu_resp::CvEduResp, skill::cv_skill_resp::CvSkillResp,
+    work::cv_work_resp::CvWorkResp,
+};
 use crate::model::diesel::cv::custom_cv_models::CvMain;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -22,6 +25,7 @@ pub struct CvMainResp {
     pub cv_section: Vec<CvSectionResp>,
     pub edu: Vec<CvEduResp>,
     pub work: Vec<CvWorkResp>,
+    pub skills: Vec<CvSkillResp>,
 }
 
 impl CvMainResp {
@@ -30,6 +34,7 @@ impl CvMainResp {
         sections: Vec<CvSectionResp>,
         edues: Vec<CvEduResp>,
         works: Vec<CvWorkResp>,
+        skills: Vec<CvSkillResp>,
     ) -> Self {
         Self {
             id: cv_main.id,
@@ -49,6 +54,7 @@ impl CvMainResp {
             stackoverflow: cv_main.stackoverflow.to_owned(),
             github: cv_main.github.to_owned(),
             blog: cv_main.blog.to_owned(),
+            skills: skills,
         }
     }
 }

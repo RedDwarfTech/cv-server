@@ -7,6 +7,7 @@ use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::edu::cv_edu_resp::CvEduResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
+use crate::model::response::cv::skill::cv_skill_resp::CvSkillResp;
 use crate::model::response::cv::work::cv_work_resp::CvWorkResp;
 use crate::service::cv::edu::edu_service::{del_edu_items, get_edu_list};
 use crate::service::cv::work::work_exp_service::{del_work_items, get_work_list};
@@ -17,6 +18,8 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
+
+use super::skills::skills_exp_service::get_skill_list;
 
 pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvMain> {
     use crate::model::diesel::cv::cv_schema::cv_main as cv_main_table;
@@ -100,14 +103,18 @@ pub fn get_cv_info(
     let edues = get_edu_list(&cv_id);
     // work
     let works_list = get_work_list(&cv_id);
+    // skill
+    let skills: Vec<crate::model::diesel::cv::custom_cv_models::CvSkill> = get_skill_list(&cv_id);
     let section_resp = get_section_by_cv(cv_id);
     let edu_resp: Vec<CvEduResp> = map_entity(edues);
     let works_resp: Vec<CvWorkResp> = map_entity(works_list);
+    let skill_resp: Vec<CvSkillResp> = map_entity(skills);
     let cv_resp = CvMainResp::from(
         &cv_result.get(0).unwrap(),
         section_resp,
         edu_resp,
         works_resp,
+        skill_resp
     );
     return Some(cv_resp);
 }
