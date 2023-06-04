@@ -1,11 +1,12 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvMain, CvSection, CvSectionContent};
+use crate::model::diesel::cv::custom_cv_models::{CvMain, CvSection, CvSectionContent, CvProjectExp};
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::edu::cv_edu_resp::CvEduResp;
+use crate::model::response::cv::project::cv_project_resp::CvProjectResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
 use crate::model::response::cv::skill::cv_skill_resp::CvSkillResp;
 use crate::model::response::cv::work::cv_work_resp::CvWorkResp;
@@ -19,6 +20,7 @@ use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
+use super::project::project_exp_service::get_project_list;
 use super::skills::skills_exp_service::get_skill_list;
 
 pub fn cv_main_list(login_user_info: &LoginUserInfo) -> Vec<CvMain> {
@@ -105,16 +107,20 @@ pub fn get_cv_info(
     let works_list = get_work_list(&cv_id);
     // skill
     let skills: Vec<crate::model::diesel::cv::custom_cv_models::CvSkill> = get_skill_list(&cv_id);
+    // project
+    let projects : Vec<CvProjectExp> = get_project_list(&cv_id);
     let section_resp = get_section_by_cv(cv_id);
     let edu_resp: Vec<CvEduResp> = map_entity(edues);
     let works_resp: Vec<CvWorkResp> = map_entity(works_list);
     let skill_resp: Vec<CvSkillResp> = map_entity(skills);
+    let projects_resp: Vec<CvProjectResp> = map_entity(projects);
     let cv_resp = CvMainResp::from(
         &cv_result.get(0).unwrap(),
         section_resp,
         edu_resp,
         works_resp,
-        skill_resp
+        skill_resp,
+        projects_resp
     );
     return Some(cv_resp);
 }

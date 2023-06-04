@@ -1,6 +1,6 @@
 use super::{
     cv_section_resp::CvSectionResp, edu::cv_edu_resp::CvEduResp, skill::cv_skill_resp::CvSkillResp,
-    work::cv_work_resp::CvWorkResp,
+    work::cv_work_resp::CvWorkResp, project::cv_project_resp::CvProjectResp,
 };
 use crate::model::diesel::cv::custom_cv_models::CvMain;
 use schemars::JsonSchema;
@@ -26,6 +26,7 @@ pub struct CvMainResp {
     pub edu: Vec<CvEduResp>,
     pub work: Vec<CvWorkResp>,
     pub skills: Vec<CvSkillResp>,
+    pub projects: Vec<CvProjectResp>,
 }
 
 impl CvMainResp {
@@ -35,6 +36,7 @@ impl CvMainResp {
         edues: Vec<CvEduResp>,
         works: Vec<CvWorkResp>,
         skills: Vec<CvSkillResp>,
+        projects: Vec<CvProjectResp>,
     ) -> Self {
         Self {
             id: cv_main.id,
@@ -55,6 +57,7 @@ impl CvMainResp {
             github: cv_main.github.to_owned(),
             blog: cv_main.blog.to_owned(),
             skills: skills,
+            projects: projects,
         }
     }
 }
