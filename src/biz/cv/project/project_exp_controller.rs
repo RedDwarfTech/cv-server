@@ -1,5 +1,5 @@
 use crate::model::request::cv::work::work_request::WorkRequest;
-use crate::service::cv::work::work_exp_service::{add_work, del_work_item, get_ui_work_list};
+use crate::service::cv::project::project_exp_service::{add_project, get_ui_project_list, del_project_item};
 use okapi::openapi3::OpenApi;
 use rocket::{get, delete};
 use rocket::serde::json::Json;
@@ -11,16 +11,16 @@ use rust_wheel::{
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: add, work_list, del_work]
+    openapi_get_routes_spec![settings: add, project_list, del_project_exp]
 }
 
-/// # 保存工作经验
+/// # 保存项目经验
 ///
-/// 工作经验
-#[openapi(tag = "工作经验")]
+/// 项目经验
+#[openapi(tag = "项目经验")]
 #[post("/v1", data = "<request>")]
 pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let cv_edu_list = add_work(&request, &login_user_info);
+    let cv_edu_list = add_project(&request, &login_user_info);
     match cv_edu_list {
         Ok(work) => {
             return box_rest_response(work);
@@ -31,23 +31,23 @@ pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> conten
     }
 }
 
-/// # 获取简历工作经验列表
+/// # 获取简历项目经验列表
 ///
-/// 获取简历工作经验列表
-#[openapi(tag = "工作经验")]
+/// 获取简历项目经验列表
+#[openapi(tag = "项目经验")]
 #[get("/v1?<cv_id>")]
-pub fn work_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let cv_edu_list = get_ui_work_list(&cv_id, &login_user_info);
+pub fn project_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let cv_edu_list = get_ui_project_list(&cv_id, &login_user_info);
     return box_rest_response(cv_edu_list);
 }
 
-/// # 删除工作经验
+/// # 删除项目经验
 ///
-/// 删除工作经验
-#[openapi(tag = "删除工作经验")]
+/// 删除项目经验
+#[openapi(tag = "删除项目经验")]
 #[delete("/v1/item?<work_id>")]
-pub fn del_work(work_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let cv_edu_list = del_work_item(&work_id, &login_user_info);
+pub fn del_project_exp(work_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let cv_edu_list = del_project_item(&work_id, &login_user_info);
     if cv_edu_list {
         return box_rest_response(work_id);
     }else{
