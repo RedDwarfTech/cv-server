@@ -5,6 +5,7 @@ use schemars::JsonSchema;
 #[derive(Serialize, Queryable, Deserialize, Default, Clone, JsonSchema)]
 pub struct CvProjectResp {
     pub id: i64,
+    pub name: String,
     pub company: Option<String>,
     pub created_time: i64,
     pub updated_time: i64,
@@ -25,6 +26,7 @@ impl From<&CvProjectExp> for CvProjectResp {
             cv_id: s.cv_id,
             user_id: s.user_id,
             company: s.company.clone(),
+            name: s.name.clone(),
             job: s.job.to_owned(),
             work_start: Some(s.work_start.unwrap().to_string()),
             work_end: Some(s.work_end.unwrap().to_string()),
