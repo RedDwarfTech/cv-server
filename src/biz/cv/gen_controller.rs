@@ -1,6 +1,6 @@
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::service::cv::gen_service::{
-    create_gen_task, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task,
+    check_gen_status, create_gen_task, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task,
 };
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
@@ -24,7 +24,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         get_list_for_render,
         page,
         del_gen,
-        pick_one_task
+        pick_one_task,
+        check_status
     ]
 }
 
@@ -119,4 +120,13 @@ pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Stri
     } else {
         return box_error_rest_response("-1", "500".to_string(), "failed".to_string());
     }
+}
+
+///
+/// 查看简历生成结果
+#[openapi(tag = "查看简历生成结果")]
+#[get("/v1/status?<ids>")]
+pub fn check_status(ids: String, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let gen_cv = check_gen_status(ids, &login_user_info);
+    return box_rest_response(gen_cv);
 }
