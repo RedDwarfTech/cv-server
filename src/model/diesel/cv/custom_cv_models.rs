@@ -213,6 +213,7 @@ pub struct CvProjectExp {
     pub work_end: Option<NaiveDate>,
     pub user_id: i64,
     pub duty: Option<String>,
+    pub city: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -228,4 +229,5 @@ pub struct CvProjectExpAdd {
     pub work_end: Option<NaiveDate>,
     pub user_id: i64,
     pub duty: Option<String>,
+    pub city: Option<String>,
 }

@@ -28,6 +28,7 @@ pub fn add_project(
         duty: request.duty.clone(),
         name: request.name.clone(),
         job: Some("ddd".to_string()),
+        city: Some(request.city.clone()),
     };
 
     if request.id.is_some() {
