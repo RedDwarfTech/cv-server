@@ -132,7 +132,6 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
     use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
     let id_array: Vec<i64> = ids.split(',').map(|x| x.parse::<i64>().unwrap()).collect();
     let mut query = cv_gen_table::table.into_boxed::<diesel::pg::Pg>();
-    query = query.filter(cv_gen_table::gen_status.eq_any([0, 1]));
     query = query.filter(cv_gen_table::id.eq_any(id_array));
     query = query.filter(cv_gen_table::user_id.eq(login_user_info.userId));
     let user_bill_books = query
