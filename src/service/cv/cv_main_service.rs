@@ -146,7 +146,7 @@ pub fn get_section_by_cv(cv_id: i64) -> Vec<CvSectionResp> {
     let mut sec_resp: Vec<CvSectionResp> = map_entity(sections.clone());
     let section_ids: Vec<i64> = sections.iter().map(|item| item.id).collect();
     let content_resp = get_content_by_section(section_ids);
-    for mut sec_item in sec_resp.iter_mut() {
+    for sec_item in sec_resp.iter_mut() {
         let item_id: i64 = sec_item.id;
         let contents: Vec<_> = content_resp
             .iter()

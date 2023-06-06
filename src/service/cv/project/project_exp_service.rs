@@ -41,6 +41,7 @@ pub fn add_project(
                 company.eq(request.company.clone()),
                 work_start.eq(admission_dt),
                 work_end.eq(graduation_dt),
+                city.eq(request.city.clone())
             ))
             .get_result::<CvProjectExp>(&mut get_connection());
         return update_result;
@@ -55,6 +56,7 @@ pub fn add_project(
                 company.eq(request.company.clone()),
                 work_start.eq(admission_dt),
                 work_end.eq(graduation_dt),
+                city.eq(request.city.clone())
             ))
             .get_result::<CvProjectExp>(&mut get_connection());
         return result;
