@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvGen, CvGenAdd};
@@ -7,6 +9,7 @@ use diesel::{
     BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl, TextExpressionMethods,
 };
 use rocket::serde::json::Json;
+use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
@@ -70,10 +73,17 @@ pub fn cv_gen_page(filter_name: Option<String>, login_user_info: &LoginUserInfo)
     return user_bill_books;
 }
 
+pub fn check_paied_plan(request: &Json<GenRequest>, login_user_info: &LoginUserInfo) -> Result<CvGen, Box<dyn Error>> {
+    if login_user_info.vipExpireTime <= get_current_millisecond() {
+        return Err(Box::new(NotVipError));
+    }
+    return create_gen_task(request, login_user_info);
+}
+
 pub fn create_gen_task(
     request: &Json<GenRequest>,
     login_user_info: &LoginUserInfo,
-) -> Result<CvGen, diesel::result::Error> {
+) -> Result<CvGen, Box<dyn Error>> {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
     let cv_gen_add = CvGenAdd {
         cv_name: request.cv_name.to_owned(),
@@ -93,7 +103,7 @@ pub fn create_gen_task(
         .do_update()
         .set(((updated_time.eq(get_current_millisecond())),))
         .get_result::<CvGen>(&mut get_connection());
-    return result;
+    return Ok(result?);
 }
 
 pub fn cv_gen_list_render(filter_name: Option<String>) -> Vec<CvGen> {

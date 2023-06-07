@@ -1,6 +1,6 @@
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::service::cv::gen_service::{
-    check_gen_status, create_gen_task, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task,
+    check_gen_status, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task, check_paied_plan,
 };
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
@@ -75,16 +75,17 @@ pub fn submit_gen_task(
     request: Json<GenRequest>,
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
-    let gen_cv = create_gen_task(&request, &login_user_info);
+    let gen_cv = check_paied_plan(&request, &login_user_info);
     match gen_cv {
         Ok(task) => {
             return box_rest_response(task);
         }
-        Err(_) => {
+        Err(err) => {
+            let source = err.source();
             return box_error_rest_response(
-                "error",
-                "sub_failed".to_string(),
-                "create task failed".to_string(),
+                "",
+                "submit failed".to_string(),
+                source.unwrap().to_string(),
             );
         }
     }
