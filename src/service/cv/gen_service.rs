@@ -75,7 +75,7 @@ pub fn cv_gen_page(filter_name: Option<String>, login_user_info: &LoginUserInfo)
 
 pub fn check_paied_plan(request: &Json<GenRequest>, login_user_info: &LoginUserInfo) -> Result<CvGen, Box<dyn Error>> {
     if login_user_info.vipExpireTime <= get_current_millisecond() {
-        return Err(Box::new(NotVipError));
+        return Err(Box::new(NotVipError::new("vip-expired".to_owned(),None)));
     }
     return create_gen_task(request, login_user_info);
 }

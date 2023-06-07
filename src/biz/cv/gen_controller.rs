@@ -81,11 +81,11 @@ pub fn submit_gen_task(
             return box_rest_response(task);
         }
         Err(err) => {
-            let source = err.source();
+            let source = err.to_string();
             return box_error_rest_response(
                 "",
                 "submit failed".to_string(),
-                source.unwrap().to_string(),
+                source.to_string(),
             );
         }
     }
