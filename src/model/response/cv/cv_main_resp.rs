@@ -22,6 +22,7 @@ pub struct CvMainResp {
     pub stackoverflow: Option<String>,
     pub github: Option<String>,
     pub blog: Option<String>,
+    pub item_order: String,
     pub cv_section: Vec<CvSectionResp>,
     pub edu: Vec<CvEduResp>,
     pub work: Vec<CvWorkResp>,
@@ -56,6 +57,7 @@ impl CvMainResp {
             stackoverflow: cv_main.stackoverflow.to_owned(),
             github: cv_main.github.to_owned(),
             blog: cv_main.blog.to_owned(),
+            item_order: cv_main.item_order.to_owned(),
             skills: skills,
             projects: projects,
         }
