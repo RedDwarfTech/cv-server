@@ -8,7 +8,10 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
-pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) -> Result<CvWorkExp, diesel::result::Error> {
+pub fn add_work(
+    request: &Json<WorkRequest>,
+    login_user_info: &LoginUserInfo,
+) -> Result<CvWorkExp, diesel::result::Error> {
     use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
     let admission_dt =
         NaiveDate::parse_from_str(&request.work_start.to_string(), "%Y-%m-%d").unwrap();
@@ -28,7 +31,12 @@ pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) ->
     };
 
     if request.id.is_some() {
-        let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::id.eq(request.id.unwrap());
+        let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::id
+            .eq(request.id.unwrap())
+            .and(
+                crate::model::diesel::cv::cv_schema::cv_work_exp::user_id
+                    .eq(login_user_info.userId),
+            );
         let update_result = diesel::update(cv_work_exp.filter(predicate))
             .set((
                 updated_time.eq(get_current_millisecond()),
@@ -56,7 +64,7 @@ pub fn add_work(request: &Json<WorkRequest>, login_user_info: &LoginUserInfo) ->
                 work_end.eq(graduation_dt),
             ))
             .get_result::<CvWorkExp>(&mut get_connection());
-        return result ;
+        return result;
     }
 }
 
