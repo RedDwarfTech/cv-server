@@ -1,8 +1,11 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvMain, CvSection, CvSectionContent, CvProjectExp};
+use crate::model::diesel::cv::custom_cv_models::{
+    CvMain, CvProjectExp, CvSection, CvSectionContent,
+};
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
+use crate::model::request::cv::main::edit_main_sort::EditMainSort;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::edu::cv_edu_resp::CvEduResp;
@@ -108,7 +111,7 @@ pub fn get_cv_info(
     // skill
     let skills: Vec<crate::model::diesel::cv::custom_cv_models::CvSkill> = get_skill_list(&cv_id);
     // project
-    let projects : Vec<CvProjectExp> = get_project_list(&cv_id);
+    let projects: Vec<CvProjectExp> = get_project_list(&cv_id);
     let section_resp = get_section_by_cv(cv_id);
     let edu_resp: Vec<CvEduResp> = map_entity(edues);
     let works_resp: Vec<CvWorkResp> = map_entity(works_list);
@@ -120,7 +123,7 @@ pub fn get_cv_info(
         edu_resp,
         works_resp,
         skill_resp,
-        projects_resp
+        projects_resp,
     );
     return Some(cv_resp);
 }
@@ -178,10 +181,10 @@ pub fn update_cv_main(
                 cv_name.eq(&request.cv_name),
                 stackoverflow.eq(&request.stackoverflow),
                 github.eq(&request.github),
-                blog.eq(&request.blog)
+                blog.eq(&request.blog),
             ))
             .get_result::<CvMain>(&mut get_connection())
-            .expect("unable to update ren result");
+            .expect("unable to update cv main");
         return Some(update_result);
     } else {
         let cv_summary = CvMainAdd::from(request, login_user_info);
@@ -205,4 +208,19 @@ pub fn update_cv_main(
             }
         }
     }
+}
+
+pub fn update_cv_main_sort(
+    request: &Json<EditMainSort>,
+    login_user_info: &LoginUserInfo,
+) -> Option<CvMain> {
+    use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
+        .eq(request.id)
+        .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
+    let update_result = diesel::update(cv_main.filter(predicate))
+        .set(item_order.eq(&request.item_order))
+        .get_result::<CvMain>(&mut get_connection())
+        .expect("unable to update cv order");
+    return Some(update_result);
 }

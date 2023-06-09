@@ -1,12 +1,12 @@
 use crate::{
-    model::request::cv::main::edit_main_request::EditMainRequest,
+    model::request::cv::main::{edit_main_request::EditMainRequest, edit_main_sort::EditMainSort},
     service::cv::cv_main_service::{
         cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, get_render_cv_by_id,
-        update_cv_main,
+        update_cv_main, update_cv_main_sort,
     },
 };
 use okapi::openapi3::OpenApi;
-use rocket::{delete, get, post, response::content, serde::json::Json};
+use rocket::{delete, get, post, put, response::content, serde::json::Json};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::{
     common::util::model_convert::{box_error_rest_response, box_rest_response},
@@ -20,7 +20,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         edit_cv_summary,
         get_summary,
         del_cv,
-        get_render_cv_detail
+        get_render_cv_detail,
+        edit_cv_sort
     ]
 }
 
@@ -103,5 +104,18 @@ pub fn edit_cv_summary(
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
     let gen_cv = update_cv_main(&request, &login_user_info);
+    return box_rest_response(gen_cv);
+}
+
+/// # 更新简历排序信息
+///
+/// 更新简历排序信息
+#[openapi(tag = "更新简历排序信息")]
+#[put("/v1/cv-order", data = "<request>")]
+pub fn edit_cv_sort(
+    request: Json<EditMainSort>,
+    login_user_info: LoginUserInfo,
+) -> content::RawJson<String> {
+    let gen_cv = update_cv_main_sort(&request, &login_user_info);
     return box_rest_response(gen_cv);
 }
