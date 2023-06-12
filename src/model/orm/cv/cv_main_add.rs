@@ -20,7 +20,8 @@ pub struct CvMainAdd {
     pub email: Option<String>,
     pub job: Option<String>,
     pub workplace: Option<String>,
-    pub item_order: String
+    pub item_order: String,
+    pub remark: Option<String>,
 }
 
 impl CvMainAdd {
@@ -38,7 +39,8 @@ impl CvMainAdd {
             email: Some(request.email.to_string()),
             job: Some(request.job.to_string()),
             workplace: Some(request.workplace.to_string()),
-            item_order: "1,2,3,4,5".to_string() 
+            item_order: "1,2,3,4,5".to_string(),
+            remark: request.remark.clone(),  
         }
     }
 }

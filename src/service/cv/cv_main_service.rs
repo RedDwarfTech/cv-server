@@ -182,6 +182,7 @@ pub fn update_cv_main(
                 stackoverflow.eq(&request.stackoverflow),
                 github.eq(&request.github),
                 blog.eq(&request.blog),
+                remark.eq(&request.remark),
             ))
             .get_result::<CvMain>(&mut get_connection())
             .expect("unable to update cv main");

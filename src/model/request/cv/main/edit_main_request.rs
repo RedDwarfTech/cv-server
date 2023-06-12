@@ -17,4 +17,5 @@ pub struct EditMainRequest {
     pub stackoverflow: Option<String>,
     pub github: Option<String>,
     pub blog: Option<String>,
+    pub remark: Option<String>,
 }
