@@ -21,7 +21,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         get_summary,
         del_cv,
         get_render_cv_detail,
-        edit_cv_sort
+        edit_cv_sort,
+        copy_cv
     ]
 }
 
@@ -113,6 +114,19 @@ pub fn edit_cv_summary(
 #[openapi(tag = "更新简历排序信息")]
 #[put("/v1/cv-order", data = "<request>")]
 pub fn edit_cv_sort(
+    request: Json<EditMainSort>,
+    login_user_info: LoginUserInfo,
+) -> content::RawJson<String> {
+    let gen_cv = update_cv_main_sort(&request, &login_user_info);
+    return box_rest_response(gen_cv);
+}
+
+/// # 复制简历
+///
+/// 复制简历
+#[openapi(tag = "复制简历")]
+#[post("/v1/cv-copy", data = "<request>")]
+pub fn copy_cv(
     request: Json<EditMainSort>,
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
