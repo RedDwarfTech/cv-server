@@ -24,7 +24,8 @@ pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo)
             "%"
         )));
     }
-    query = query.filter(cv_gen_table::user_id.eq(login_user_info.userId));
+    query = query.filter(cv_gen_table::user_id.eq(login_user_info.userId))
+    .order(cv_gen_table::created_time.desc());
     let user_bill_books = query
         .load::<CvGen>(&mut get_connection())
         .expect("error get user gen record");
