@@ -78,6 +78,7 @@ pub struct CvMain {
     pub github: Option<String>,
     pub blog: Option<String>,
     pub item_order: String,
+    pub remark: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

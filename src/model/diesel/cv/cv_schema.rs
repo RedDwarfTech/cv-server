@@ -49,6 +49,7 @@ table! {
         github -> Nullable<Varchar>,
         blog -> Nullable<Varchar>,
         item_order -> Varchar,
+        remark -> Nullable<Varchar>,
     }
 }
 

@@ -15,7 +15,7 @@ use rust_wheel::{
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![
-        settings: get,
+        settings: get_cv_list,
         get_cv_detail,
         edit_cv_summary,
         get_summary,
@@ -30,7 +30,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 查询简历
 #[openapi(tag = "用户简历列表")]
 #[get("/v1/cv/list")]
-pub fn get(login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn get_cv_list(login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let main_cvs = cv_main_list(&login_user_info);
     return box_rest_response(main_cvs);
 }
