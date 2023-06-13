@@ -26,10 +26,10 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
     ]
 }
 
-/// # 查询简历
+/// # 查询用户简历列表
 ///
-/// 查询简历
-#[openapi(tag = "用户简历列表")]
+/// 查询用户简历列表
+#[openapi(tag = "简历")]
 #[get("/v1/cv/list")]
 pub fn get_cv_list(login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let main_cvs = cv_main_list(&login_user_info);
@@ -39,7 +39,7 @@ pub fn get_cv_list(login_user_info: LoginUserInfo) -> content::RawJson<String> {
 /// # 根据ID查询简历
 ///
 /// 根据ID查询简历
-#[openapi(tag = "根据ID查询简历")]
+#[openapi(tag = "简历")]
 #[get("/v1/cv/<id>")]
 pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = get_cv_by_id(id, &login_user_info);
@@ -50,10 +50,10 @@ pub fn get_cv_detail(id: i64, login_user_info: LoginUserInfo) -> content::RawJso
     }
 }
 
-/// # 根据ID查询简历
+/// # 根据ID查询简历(渲染器)
 ///
-/// 根据ID查询简历
-#[openapi(tag = "根据ID查询简历(渲染器)")]
+/// 根据ID查询简历(渲染器)
+#[openapi(tag = "简历")]
 #[get("/v1/render-cv/<id>")]
 pub fn get_render_cv_detail(id: i64) -> content::RawJson<String> {
     let gen_cv = get_render_cv_by_id(id);
@@ -67,7 +67,7 @@ pub fn get_render_cv_detail(id: i64) -> content::RawJson<String> {
 /// # 根据ID删除简历
 ///
 /// 根据ID删除简历
-#[openapi(tag = "根据ID删除简历")]
+#[openapi(tag = "简历")]
 #[delete("/v1/cv/<id>")]
 pub fn del_cv(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let del_result = del_cv_by_id(id, &login_user_info);
@@ -84,7 +84,7 @@ pub fn del_cv(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Strin
 /// # 根据ID查询简历基础信息
 ///
 /// 根据ID查询简历基础信息
-#[openapi(tag = "根据ID查询简历基础信息")]
+#[openapi(tag = "简历")]
 #[get("/v1/summary/<id>")]
 pub fn get_summary(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = get_cv_summary(id, &login_user_info);
@@ -98,7 +98,7 @@ pub fn get_summary(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<
 /// # 更新简历基础信息
 ///
 /// 更新简历基础信息
-#[openapi(tag = "更新简历基础信息")]
+#[openapi(tag = "简历")]
 #[post("/v1/cv", data = "<request>")]
 pub fn edit_cv_summary(
     request: Json<EditMainRequest>,
@@ -111,7 +111,7 @@ pub fn edit_cv_summary(
 /// # 更新简历排序信息
 ///
 /// 更新简历排序信息
-#[openapi(tag = "更新简历排序信息")]
+#[openapi(tag = "简历")]
 #[put("/v1/cv-order", data = "<request>")]
 pub fn edit_cv_sort(
     request: Json<EditMainSort>,
@@ -124,7 +124,7 @@ pub fn edit_cv_sort(
 /// # 复制简历
 ///
 /// 复制简历
-#[openapi(tag = "复制简历")]
+#[openapi(tag = "简历")]
 #[post("/v1/cv-copy", data = "<request>")]
 pub fn copy_cv(
     request: Json<CopyMainCv>,
