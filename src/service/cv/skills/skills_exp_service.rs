@@ -1,6 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvSkill, CvSkillAdd};
+use crate::model::diesel::cv::custom_cv_models::{CvSkill};
+use crate::model::orm::cv::skill::cv_skill_add::CvSkillAdd;
 use crate::model::request::cv::skills::skills_request::SkillsRequest;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
 use rocket::serde::json::Json;

@@ -11,6 +11,7 @@ pub struct CvProjectResp {
     pub updated_time: i64,
     pub cv_id: i64,
     pub job: Option<String>,
+    pub city: Option<String>,
     pub work_start: Option<String>,
     pub work_end: Option<String>,
     pub user_id: i64,
@@ -31,6 +32,7 @@ impl From<&CvProjectExp> for CvProjectResp {
             work_start: Some(s.work_start.unwrap().to_string()),
             work_end: Some(s.work_end.unwrap().to_string()),
             duty: s.duty.clone(),
+            city: s.city.clone(),
         }
     }
 }

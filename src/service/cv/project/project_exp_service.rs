@@ -1,6 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvProjectExp, CvProjectExpAdd};
+use crate::model::diesel::cv::custom_cv_models::{CvProjectExp};
+use crate::model::orm::cv::project::cv_project_add::CvProjectExpAdd;
 use crate::model::request::cv::project::project_request::ProjectRequest;
 use chrono::NaiveDate;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
