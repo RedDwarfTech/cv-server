@@ -1,6 +1,6 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvSkill};
+use crate::model::diesel::cv::custom_cv_models::CvSkill;
 use crate::model::orm::cv::skill::cv_skill_add::CvSkillAdd;
 use crate::model::request::cv::skills::skills_request::SkillsRequest;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
@@ -85,7 +85,7 @@ pub fn del_skill_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool {
     }
 }
 
-pub fn _del_skills_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+pub fn del_skills_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
     use crate::model::diesel::cv::cv_schema::cv_skills::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_skills::cv_id
         .eq(del_cv_id)

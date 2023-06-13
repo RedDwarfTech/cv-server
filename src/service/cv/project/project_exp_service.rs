@@ -102,7 +102,7 @@ pub fn del_project_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool 
     }
 }
 
-pub fn _del_project_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+pub fn del_project_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
     use crate::model::diesel::cv::cv_schema::cv_project_exp::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_project_exp::cv_id
         .eq(del_cv_id)

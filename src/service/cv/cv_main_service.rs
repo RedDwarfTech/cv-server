@@ -1,7 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{
-    CvMain, CvProjectExp, CvSection, CvSectionContent, CvEdu, CvWorkExp, CvSkill,
+    CvEdu, CvMain, CvProjectExp, CvSection, CvSectionContent, CvSkill, CvWorkExp,
 };
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::orm::cv::edu::cv_edu_add::CvEduAdd;
@@ -19,6 +19,8 @@ use crate::model::response::cv::section_content_resp::SectionContentResp;
 use crate::model::response::cv::skill::cv_skill_resp::CvSkillResp;
 use crate::model::response::cv::work::cv_work_resp::CvWorkResp;
 use crate::service::cv::edu::edu_service::{del_edu_items, get_edu_list};
+use crate::service::cv::project::project_exp_service::del_project_items;
+use crate::service::cv::skills::skills_exp_service::del_skills_items;
 use crate::service::cv::work::work_exp_service::{del_work_items, get_work_list};
 use diesel::query_dsl::methods::BoxedDsl;
 use diesel::result::Error;
@@ -72,6 +74,8 @@ pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Result<&str,
             Ok(_v) => {
                 del_edu_items(&cv_id, login_user_info);
                 del_work_items(&cv_id, login_user_info);
+                del_project_items(&cv_id, login_user_info);
+                del_skills_items(&cv_id, login_user_info);
                 Ok("")
             }
             Err(e) => diesel::result::QueryResult::Err(e),
@@ -237,7 +241,7 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
     match cv_resp {
         Some(main) => {
             let mut cv_summary = CvMainAdd::from_resp(&main, login_user_info);
-            cv_summary.cv_name = format!("{}{}",cv_summary.cv_name,"-Copy");
+            cv_summary.cv_name = format!("{}{}", cv_summary.cv_name, "-Copy");
             use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
             let _result = connection.transaction(|conn| {
                 // insert main
@@ -247,12 +251,12 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
                     .get_result(conn);
                 match record_id {
                     Ok(inserted_cv_id) => {
-                        insert_edu(main.edu, login_user_info,&inserted_cv_id);
-                        insert_work(main.work,login_user_info,&inserted_cv_id);
-                        insert_skills(main.skills,login_user_info,&inserted_cv_id);
-                        insert_project(main.projects,login_user_info,&inserted_cv_id);
-                    },
-                    Err(_) => {},
+                        insert_edu(main.edu, login_user_info, &inserted_cv_id);
+                        insert_work(main.work, login_user_info, &inserted_cv_id);
+                        insert_skills(main.skills, login_user_info, &inserted_cv_id);
+                        insert_project(main.projects, login_user_info, &inserted_cv_id);
+                    }
+                    Err(_) => {}
                 }
                 return record_id;
             });
@@ -263,46 +267,50 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
     return Some(1);
 }
 
-fn insert_edu(edues: Vec<CvEduResp>, login_user_info: &LoginUserInfo,inserted_cv_id: &i64) {
+fn insert_edu(edues: Vec<CvEduResp>, login_user_info: &LoginUserInfo, inserted_cv_id: &i64) {
     use crate::model::diesel::cv::cv_schema::cv_edu::dsl::*;
     for edu in edues.iter() {
         let mut edu_add = CvEduAdd::from_edu_resp(edu, login_user_info);
         edu_add.cv_id = inserted_cv_id.clone();
         let _result = diesel::insert_into(cv_edu)
-                    .values(&edu_add)
-                    .get_result::<CvEdu>(&mut get_connection());
+            .values(&edu_add)
+            .get_result::<CvEdu>(&mut get_connection());
     }
 }
 
-fn insert_work(workes: Vec<CvWorkResp>, login_user_info: &LoginUserInfo,inserted_cv_id: &i64) {
+fn insert_work(workes: Vec<CvWorkResp>, login_user_info: &LoginUserInfo, inserted_cv_id: &i64) {
     use crate::model::diesel::cv::cv_schema::cv_work_exp::dsl::*;
     for edu in workes.iter() {
         let mut edu_add = CvWorkExpAdd::from_work_resp(edu, login_user_info);
         edu_add.cv_id = inserted_cv_id.clone();
         let _result = diesel::insert_into(cv_work_exp)
-                    .values(&edu_add)
-                    .get_result::<CvWorkExp>(&mut get_connection());
+            .values(&edu_add)
+            .get_result::<CvWorkExp>(&mut get_connection());
     }
 }
 
-fn insert_skills(workes: Vec<CvSkillResp>, login_user_info: &LoginUserInfo,inserted_cv_id: &i64) {
+fn insert_skills(workes: Vec<CvSkillResp>, login_user_info: &LoginUserInfo, inserted_cv_id: &i64) {
     use crate::model::diesel::cv::cv_schema::cv_skills::dsl::*;
     for edu in workes.iter() {
         let mut edu_add = CvSkillAdd::from_work_resp(edu, login_user_info);
         edu_add.cv_id = inserted_cv_id.clone();
         let _result = diesel::insert_into(cv_skills)
-                    .values(&edu_add)
-                    .get_result::<CvSkill>(&mut get_connection());
+            .values(&edu_add)
+            .get_result::<CvSkill>(&mut get_connection());
     }
 }
 
-fn insert_project(workes: Vec<CvProjectResp>, login_user_info: &LoginUserInfo,inserted_cv_id: &i64) {
+fn insert_project(
+    workes: Vec<CvProjectResp>,
+    login_user_info: &LoginUserInfo,
+    inserted_cv_id: &i64,
+) {
     use crate::model::diesel::cv::cv_schema::cv_project_exp::dsl::*;
     for edu in workes.iter() {
         let mut edu_add = CvProjectExpAdd::from_work_resp(edu, login_user_info);
         edu_add.cv_id = inserted_cv_id.clone();
         let _result = diesel::insert_into(cv_project_exp)
-                    .values(&edu_add)
-                    .get_result::<CvProjectExp>(&mut get_connection());
+            .values(&edu_add)
+            .get_result::<CvProjectExp>(&mut get_connection());
     }
 }
