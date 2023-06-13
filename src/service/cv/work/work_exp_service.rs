@@ -1,6 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvWorkExp, CvWorkExpAdd};
+use crate::model::diesel::cv::custom_cv_models::{CvWorkExp};
+use crate::model::orm::cv::work::cv_work_add::CvWorkExpAdd;
 use crate::model::request::cv::work::work_request::WorkRequest;
 use chrono::NaiveDate;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
@@ -17,19 +18,7 @@ pub fn add_work(
         NaiveDate::parse_from_str(&request.work_start.to_string(), "%Y-%m-%d").unwrap();
     let graduation_dt =
         NaiveDate::parse_from_str(&request.work_end.to_string(), "%Y-%m-%d").unwrap();
-    let cv_edu_model = CvWorkExpAdd {
-        created_time: get_current_millisecond(),
-        updated_time: get_current_millisecond(),
-        cv_id: request.cv_id,
-        user_id: login_user_info.userId,
-        work_start: Some(admission_dt),
-        work_end: Some(graduation_dt),
-        company: request.company.clone(),
-        job: Some(request.job.clone()),
-        city: Some(request.city.to_string()),
-        duty: request.duty.clone(),
-    };
-
+    let cv_edu_model = CvWorkExpAdd::from_request(request, login_user_info);
     if request.id.is_some() {
         let predicate = crate::model::diesel::cv::cv_schema::cv_work_exp::id
             .eq(request.id.unwrap())
