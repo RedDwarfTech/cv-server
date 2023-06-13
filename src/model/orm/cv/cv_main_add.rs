@@ -4,6 +4,7 @@ use serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::cv::cv_schema::*;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
+use crate::model::response::cv::cv_main_resp::CvMainResp;
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[diesel(table_name = cv_main)]
@@ -39,6 +40,25 @@ impl CvMainAdd {
             email: Some(request.email.to_string()),
             job: Some(request.job.to_string()),
             workplace: Some(request.workplace.to_string()),
+            item_order: "1,2,3,4,5".to_string(),
+            remark: request.remark.clone(),  
+        }
+    }
+
+    pub(crate) fn from_resp(request: &CvMainResp, login_user_info: &LoginUserInfo) ->Self {
+        Self {
+            cv_name: request.cv_name.to_string(),
+            created_time: get_current_millisecond(),
+            updated_time: get_current_millisecond(),
+            user_id: login_user_info.userId,
+            cv_status: 0,
+            template_id: 1,
+            employee_name: request.employee_name.clone(),
+            birthday: request.birthday.clone(),
+            phone: request.phone.clone(),
+            email: request.email.clone(),
+            job: request.job.clone(),
+            workplace: request.workplace.clone(),
             item_order: "1,2,3,4,5".to_string(),
             remark: request.remark.clone(),  
         }

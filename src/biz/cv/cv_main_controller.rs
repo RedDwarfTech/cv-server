@@ -2,7 +2,7 @@ use crate::{
     model::request::cv::main::{edit_main_request::EditMainRequest, edit_main_sort::EditMainSort},
     service::cv::cv_main_service::{
         cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, get_render_cv_by_id,
-        update_cv_main, update_cv_main_sort,
+        update_cv_main, update_cv_main_sort, copy_cv_main,
     },
 };
 use okapi::openapi3::OpenApi;
@@ -130,6 +130,6 @@ pub fn copy_cv(
     request: Json<EditMainSort>,
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
-    let gen_cv = update_cv_main_sort(&request, &login_user_info);
+    let gen_cv = copy_cv_main(&request, &login_user_info);
     return box_rest_response(gen_cv);
 }

@@ -1,6 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvEdu, CvEduAdd};
+use crate::model::diesel::cv::custom_cv_models::{CvEdu};
+use crate::model::orm::cv::edu::cv_edu_add::CvEduAdd;
 use crate::model::request::cv::edu::edu_request::EduRequest;
 use chrono::NaiveDate;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl};
@@ -17,18 +18,7 @@ pub fn add_edu(
         NaiveDate::parse_from_str(&request.admission.to_string(), "%Y-%m-%d").unwrap();
     let graduation_dt =
         NaiveDate::parse_from_str(&request.graduation.to_string(), "%Y-%m-%d").unwrap();
-    let cv_edu_model = CvEduAdd {
-        edu_addr: request.edu_addr.to_string(),
-        created_time: get_current_millisecond(),
-        updated_time: get_current_millisecond(),
-        cv_id: request.cv_id,
-        user_id: login_user_info.userId,
-        degree: Some(request.degree.to_string()),
-        major: Some(request.major.to_string()),
-        admission: Some(admission_dt),
-        graduation: Some(graduation_dt),
-        city: request.city.to_owned(),
-    };
+    let cv_edu_model = CvEduAdd::from_request(request, login_user_info);
     if request.id.is_some() {
         let predicate = crate::model::diesel::cv::cv_schema::cv_edu::id.eq(request.id.unwrap());
         let update_result = diesel::update(cv_edu.filter(predicate))

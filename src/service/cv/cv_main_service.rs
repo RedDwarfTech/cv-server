@@ -1,9 +1,10 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{
-    CvMain, CvProjectExp, CvSection, CvSectionContent,
+    CvMain, CvProjectExp, CvSection, CvSectionContent, CvEdu,
 };
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
+use crate::model::orm::cv::edu::cv_edu_add::CvEduAdd;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::request::cv::main::edit_main_sort::EditMainSort;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
@@ -224,4 +225,36 @@ pub fn update_cv_main_sort(
         .get_result::<CvMain>(&mut get_connection())
         .expect("unable to update cv order");
     return Some(update_result);
+}
+
+pub fn copy_cv_main(request: &Json<EditMainSort>, login_user_info: &LoginUserInfo) -> Option<i64> {
+    let mut connection = get_connection();
+    let cv_resp = get_cv_by_id(request.id, login_user_info);
+    match cv_resp {
+        Some(main) => {
+            let cv_summary = CvMainAdd::from_resp(&main, login_user_info);
+            use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+            let _result = connection.transaction(|conn| {
+                // insert main
+                let result = diesel::insert_into(cv_main)
+                    .values(&cv_summary)
+                    .get_result::<CvMain>(conn);
+                insert_edu(main.edu, login_user_info);
+                return result;
+            });
+            return Some(1);
+        }
+        None => {}
+    }
+    return Some(1);
+}
+
+fn insert_edu(edues: Vec<CvEduResp>, login_user_info: &LoginUserInfo) {
+    use crate::model::diesel::cv::cv_schema::cv_edu::dsl::*;
+    for edu in edues.iter() {
+        let edu_add = CvEduAdd::from_edu_resp(edu, login_user_info);
+        let _result = diesel::insert_into(cv_edu)
+                    .values(&edu_add)
+                    .get_result::<CvEdu>(&mut get_connection());
+    }
 }
