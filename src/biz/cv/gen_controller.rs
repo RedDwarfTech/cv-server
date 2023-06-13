@@ -32,7 +32,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// # 查询简历生成记录
 ///
 /// 查询简历生成记录
-#[openapi(tag = "简历生成记录")]
+#[openapi(tag = "简历渲染")]
 #[get("/v1/list?<cv_name>")]
 pub fn list(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = cv_gen_list(cv_name.clone(), &login_user_info);
@@ -42,7 +42,7 @@ pub fn list(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content:
 /// # 查询一个简历生成记录
 ///
 /// 查询一个简历生成记录
-#[openapi(tag = "查询一个简历生成记录")]
+#[openapi(tag = "简历渲染")]
 #[get("/v1/pick")]
 pub fn pick_one_task() -> content::RawJson<String> {
     let gen_cv = pick_task();
@@ -59,7 +59,7 @@ pub fn pick_one_task() -> content::RawJson<String> {
 /// # 分页查询简历生成记录
 ///
 /// 分页查询简历生成记录
-#[openapi(tag = "简历生成记录分页")]
+#[openapi(tag = "简历渲染")]
 #[get("/v1/page?<cv_name>")]
 pub fn page(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = cv_gen_page(cv_name.clone(), &login_user_info);
@@ -69,7 +69,7 @@ pub fn page(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content:
 /// # 提交渲染任务
 ///
 /// 提交渲染任务
-#[openapi(tag = "提交渲染任务")]
+#[openapi(tag = "简历渲染")]
 #[post("/v1/submit", data = "<request>")]
 pub fn submit_gen_task(
     request: Json<GenRequest>,
@@ -94,25 +94,27 @@ pub fn submit_gen_task(
 /// # 渲染器查询简历生成记录
 ///
 /// 渲染器查询简历生成记录
-#[openapi(tag = "简历生成记录(渲染器)")]
+#[openapi(tag = "简历渲染")]
 #[get("/v1/render-list?<cv_name>")]
 pub fn get_list_for_render(cv_name: Option<String>) -> content::RawJson<String> {
     let gen_cv = cv_gen_list_render(cv_name.clone());
     return box_rest_response(gen_cv);
 }
 
-///
+/// # 更新简历生成结果
+/// 
 /// 更新简历生成结果
-#[openapi(tag = "更新简历生成结果")]
+#[openapi(tag = "简历渲染")]
 #[put("/v1/result", data = "<request>")]
 pub fn flush_render_result(request: Json<RenderResultRequest>) -> content::RawJson<String> {
     let gen_cv = update_gen_result(request);
     return box_rest_response(gen_cv);
 }
 
-///
+/// # 删除简历生成结果
+/// 
 /// 删除简历生成结果
-#[openapi(tag = "删除简历生成结果")]
+#[openapi(tag = "简历渲染")]
 #[delete("/v1/<id>")]
 pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = del_gen_impl(&id, &login_user_info);
@@ -123,9 +125,10 @@ pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Stri
     }
 }
 
-///
+/// # 查看简历生成结果
+/// 
 /// 查看简历生成结果
-#[openapi(tag = "查看简历生成结果")]
+#[openapi(tag = "简历渲染")]
 #[get("/v1/status?<ids>")]
 pub fn check_status(ids: String, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = check_gen_status(ids, &login_user_info);
