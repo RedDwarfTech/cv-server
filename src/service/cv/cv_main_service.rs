@@ -5,6 +5,7 @@ use crate::model::diesel::cv::custom_cv_models::{
 };
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::orm::cv::edu::cv_edu_add::CvEduAdd;
+use crate::model::request::cv::main::copy_main_cv::CopyMainCv;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::request::cv::main::edit_main_sort::EditMainSort;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
@@ -227,7 +228,7 @@ pub fn update_cv_main_sort(
     return Some(update_result);
 }
 
-pub fn copy_cv_main(request: &Json<EditMainSort>, login_user_info: &LoginUserInfo) -> Option<i64> {
+pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo) -> Option<i64> {
     let mut connection = get_connection();
     let cv_resp = get_cv_by_id(request.id, login_user_info);
     match cv_resp {

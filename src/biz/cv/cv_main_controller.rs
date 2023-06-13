@@ -1,5 +1,5 @@
 use crate::{
-    model::request::cv::main::{edit_main_request::EditMainRequest, edit_main_sort::EditMainSort},
+    model::request::cv::main::{edit_main_request::EditMainRequest, edit_main_sort::EditMainSort, copy_main_cv::CopyMainCv},
     service::cv::cv_main_service::{
         cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, get_render_cv_by_id,
         update_cv_main, update_cv_main_sort, copy_cv_main,
@@ -127,7 +127,7 @@ pub fn edit_cv_sort(
 #[openapi(tag = "复制简历")]
 #[post("/v1/cv-copy", data = "<request>")]
 pub fn copy_cv(
-    request: Json<EditMainSort>,
+    request: Json<CopyMainCv>,
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
     let gen_cv = copy_cv_main(&request, &login_user_info);
