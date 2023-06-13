@@ -19,7 +19,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// # 保存项目经验
 ///
 /// 项目经验
-#[openapi(tag = "项目经验")]
+#[openapi(tag = "简历-项目经历")]
 #[post("/v1", data = "<request>")]
 pub fn add(
     request: Json<ProjectRequest>,
@@ -39,7 +39,7 @@ pub fn add(
 /// # 获取简历项目经验列表
 ///
 /// 获取简历项目经验列表
-#[openapi(tag = "项目经验")]
+#[openapi(tag = "简历-项目经历")]
 #[get("/v1?<cv_id>")]
 pub fn project_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = get_ui_project_list(&cv_id, &login_user_info);
@@ -49,7 +49,7 @@ pub fn project_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJ
 /// # 删除项目经验
 ///
 /// 删除项目经验
-#[openapi(tag = "删除项目经验")]
+#[openapi(tag = "简历-项目经历")]
 #[delete("/v1/item?<work_id>")]
 pub fn del_project_exp(work_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = del_project_item(&work_id, &login_user_info);

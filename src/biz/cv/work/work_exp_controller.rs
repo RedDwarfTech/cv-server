@@ -17,7 +17,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// # 保存工作经验
 ///
 /// 工作经验
-#[openapi(tag = "工作经验")]
+#[openapi(tag = "简历-工作经历")]
 #[post("/v1", data = "<request>")]
 pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = add_work(&request, &login_user_info);
@@ -34,7 +34,7 @@ pub fn add(request: Json<WorkRequest>, login_user_info: LoginUserInfo) -> conten
 /// # 获取简历工作经验列表
 ///
 /// 获取简历工作经验列表
-#[openapi(tag = "工作经验")]
+#[openapi(tag = "简历-工作经历")]
 #[get("/v1?<cv_id>")]
 pub fn work_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = get_ui_work_list(&cv_id, &login_user_info);
@@ -44,7 +44,7 @@ pub fn work_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson
 /// # 删除工作经验
 ///
 /// 删除工作经验
-#[openapi(tag = "删除工作经验")]
+#[openapi(tag = "简历-工作经历")]
 #[delete("/v1/item?<work_id>")]
 pub fn del_work(work_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = del_work_item(&work_id, &login_user_info);

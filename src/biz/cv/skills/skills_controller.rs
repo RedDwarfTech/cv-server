@@ -17,7 +17,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// # 保存专业技能
 ///
 /// 专业技能
-#[openapi(tag = "专业技能")]
+#[openapi(tag = "简历-专业技能")]
 #[post("/v1", data = "<request>")]
 pub fn add(request: Json<SkillsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = add_skill(&request, &login_user_info);
@@ -34,7 +34,7 @@ pub fn add(request: Json<SkillsRequest>, login_user_info: LoginUserInfo) -> cont
 /// # 获取简历专业技能列表
 ///
 /// 获取简历专业技能列表
-#[openapi(tag = "专业技能")]
+#[openapi(tag = "简历-专业技能")]
 #[get("/v1?<cv_id>")]
 pub fn skills_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = get_ui_skill_list(&cv_id, &login_user_info);
@@ -44,7 +44,7 @@ pub fn skills_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJs
 /// # 删除专业技能
 ///
 /// 删除专业技能
-#[openapi(tag = "删除专业技能")]
+#[openapi(tag = "简历-专业技能")]
 #[delete("/v1/item?<skill_id>")]
 pub fn del_skill(skill_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = del_skill_item(&skill_id, &login_user_info);

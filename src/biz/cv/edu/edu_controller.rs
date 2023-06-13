@@ -17,7 +17,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// # 保存教育信息
 ///
 /// 教育信息
-#[openapi(tag = "保存教育信息")]
+#[openapi(tag = "简历-教育信息")]
 #[post("/v1", data = "<request>")]
 pub fn add_or_update(
     request: Json<EduRequest>,
@@ -37,7 +37,7 @@ pub fn add_or_update(
 /// # 获取教育信息
 ///
 /// 获取教育信息
-#[openapi(tag = "教育信息")]
+#[openapi(tag = "简历-教育信息")]
 #[get("/v1?<cv_id>")]
 pub fn edu_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = get_ui_edu_list(&cv_id, &login_user_info);
@@ -47,7 +47,7 @@ pub fn edu_list(cv_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<
 /// # 删除教育信息
 ///
 /// 删除教育信息
-#[openapi(tag = "删除教育信息")]
+#[openapi(tag = "简历-教育信息")]
 #[delete("/v1/item?<edu_id>")]
 pub fn del_edu(edu_id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let cv_edu_list = del_edu_item(&edu_id, &login_user_info);
