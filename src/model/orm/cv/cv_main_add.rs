@@ -23,6 +23,9 @@ pub struct CvMainAdd {
     pub workplace: Option<String>,
     pub item_order: String,
     pub remark: Option<String>,
+    pub stackoverflow: Option<String>,
+    pub github: Option<String>,
+    pub blog: Option<String>,
 }
 
 impl CvMainAdd {
@@ -41,7 +44,10 @@ impl CvMainAdd {
             job: Some(request.job.to_string()),
             workplace: Some(request.workplace.to_string()),
             item_order: "1,2,3,4,5".to_string(),
-            remark: request.remark.clone(),  
+            remark: request.remark.clone(),
+            stackoverflow: request.stackoverflow.clone(),
+            github: request.github.clone(),
+            blog: request.blog.clone(),  
         }
     }
 
@@ -60,7 +66,10 @@ impl CvMainAdd {
             job: request.job.clone(),
             workplace: request.workplace.clone(),
             item_order: "1,2,3,4,5".to_string(),
-            remark: request.remark.clone(),  
+            remark: request.remark.clone(),
+            stackoverflow: request.stackoverflow.clone(),
+            github: request.github.clone(),
+            blog: request.blog.clone(),   
         }
     }
 }
