@@ -233,15 +233,22 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
     let cv_resp = get_cv_by_id(request.id, login_user_info);
     match cv_resp {
         Some(main) => {
-            let cv_summary = CvMainAdd::from_resp(&main, login_user_info);
+            let mut cv_summary = CvMainAdd::from_resp(&main, login_user_info);
+            cv_summary.cv_name = format!("{}{}",cv_summary.cv_name,"-Copy");
             use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
             let _result = connection.transaction(|conn| {
                 // insert main
-                let result = diesel::insert_into(cv_main)
+                let record_id = diesel::insert_into(cv_main)
                     .values(&cv_summary)
-                    .get_result::<CvMain>(conn);
-                insert_edu(main.edu, login_user_info);
-                return result;
+                    .returning(id)
+                    .get_result(conn);
+                match record_id {
+                    Ok(inserted_cv_id) => {
+                        insert_edu(main.edu, login_user_info,inserted_cv_id);
+                    },
+                    Err(_) => {},
+                }
+                return record_id;
             });
             return Some(1);
         }
@@ -250,10 +257,11 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
     return Some(1);
 }
 
-fn insert_edu(edues: Vec<CvEduResp>, login_user_info: &LoginUserInfo) {
+fn insert_edu(edues: Vec<CvEduResp>, login_user_info: &LoginUserInfo,inserted_cv_id: i64) {
     use crate::model::diesel::cv::cv_schema::cv_edu::dsl::*;
     for edu in edues.iter() {
-        let edu_add = CvEduAdd::from_edu_resp(edu, login_user_info);
+        let mut edu_add = CvEduAdd::from_edu_resp(edu, login_user_info);
+        edu_add.cv_id = inserted_cv_id;
         let _result = diesel::insert_into(cv_edu)
                     .values(&edu_add)
                     .get_result::<CvEdu>(&mut get_connection());
