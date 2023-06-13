@@ -55,7 +55,8 @@ pub fn get_ui_edu_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvEd
     use crate::model::diesel::cv::cv_schema::cv_edu as cv_edu_table;
     let mut query = cv_edu_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_edu_table::cv_id.eq(cv_id));
-    query = query.filter(cv_edu_table::user_id.eq(login_user_info.userId));
+    query = query.filter(cv_edu_table::user_id.eq(login_user_info.userId))
+    .order(cv_edu_table::graduation.desc());
     let cvs = query
         .load::<CvEdu>(&mut get_connection())
         .expect("error get edu list");

@@ -68,7 +68,8 @@ pub fn get_ui_project_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<
     use crate::model::diesel::cv::cv_schema::cv_project_exp as cv_work_table;
     let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_work_table::user_id.eq(login_user_info.userId));
-    query = query.filter(cv_work_table::cv_id.eq(cv_id));
+    query = query.filter(cv_work_table::cv_id.eq(cv_id))
+    .order(cv_work_table::work_end.desc());
     let cvs = query
         .load::<CvProjectExp>(&mut get_connection())
         .expect("error get work list");
