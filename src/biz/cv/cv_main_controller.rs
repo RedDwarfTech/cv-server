@@ -1,8 +1,11 @@
 use crate::{
-    model::request::cv::main::{edit_main_request::EditMainRequest, edit_main_sort::EditMainSort, copy_main_cv::CopyMainCv},
+    model::request::cv::main::{
+        copy_main_cv::CopyMainCv, edit_main_request::EditMainRequest, edit_main_sort::EditMainSort,
+        update_main_cv_tpl::UpdateMainCvTpl,
+    },
     service::cv::cv_main_service::{
-        cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary, get_render_cv_by_id,
-        update_cv_main, update_cv_main_sort, copy_cv_main,
+        copy_cv_main, cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary,
+        get_render_cv_by_id, update_cv_main, update_cv_main_sort, update_cv_template,
     },
 };
 use okapi::openapi3::OpenApi;
@@ -22,7 +25,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         del_cv,
         get_render_cv_detail,
         edit_cv_sort,
-        copy_cv
+        copy_cv,
+        update_cv_tpl
     ]
 }
 
@@ -132,4 +136,24 @@ pub fn copy_cv(
 ) -> content::RawJson<String> {
     let gen_cv = copy_cv_main(&request, &login_user_info);
     return box_rest_response(gen_cv);
+}
+
+/// # 更新简历模版
+///
+/// 更新简历模版
+#[openapi(tag = "简历")]
+#[post("/v1/tpl", data = "<request>")]
+pub fn update_cv_tpl(
+    request: Json<UpdateMainCvTpl>,
+    login_user_info: LoginUserInfo,
+) -> content::RawJson<String> {
+    let gen_cv = update_cv_template(&request.cv_id, &request.tpl_id, &login_user_info);
+    match gen_cv {
+        Ok(main) => {
+            return box_rest_response(main);
+        }
+        Err(e) => {
+            return box_error_rest_response("-1", "500".to_string(), e.to_string());
+        }
+    }
 }

@@ -314,3 +314,14 @@ fn insert_project(
             .get_result::<CvProjectExp>(&mut get_connection());
     }
 }
+
+pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUserInfo) -> Result<CvMain, diesel::result::Error> {
+    use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
+        .eq(cv_id)
+        .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
+    let update_result = diesel::update(cv_main.filter(predicate))
+        .set(template_id.eq(tpl_id))
+        .get_result::<CvMain>(&mut get_connection());
+    return update_result;
+}
