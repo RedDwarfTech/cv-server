@@ -56,6 +56,7 @@ pub struct CvTemplate {
     pub template_id: i64,
     pub preview_url: Option<String>,
     pub template_code: Option<String>,
+    pub online_status: i32,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

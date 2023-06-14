@@ -126,6 +126,7 @@ table! {
         template_id -> Int8,
         preview_url -> Nullable<Varchar>,
         template_code -> Nullable<Varchar>,
+        online_status -> Int4,
     }
 }
 

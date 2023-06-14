@@ -13,4 +13,12 @@ pub fn get_tempalte_by_id(tpl_id: i64) -> CvTemplate {
     return tpl.get(0).unwrap().to_owned();
 }
 
-
+pub fn get_tempalte_list() -> Vec<CvTemplate> {
+    use crate::model::diesel::cv::cv_schema::cv_template as cv_tpl_table;
+    let mut query = cv_tpl_table::table.into_boxed::<diesel::pg::Pg>();
+    query = query.filter(cv_tpl_table::online_status.eq(1));
+    let tpl = query
+        .load::<CvTemplate>(&mut get_connection())
+        .expect("error get cv template list");
+    return tpl;
+}
