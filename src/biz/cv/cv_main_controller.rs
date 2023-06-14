@@ -142,7 +142,7 @@ pub fn copy_cv(
 ///
 /// 更新简历模版
 #[openapi(tag = "简历")]
-#[post("/v1/tpl", data = "<request>")]
+#[put("/v1/tpl", data = "<request>")]
 pub fn update_cv_tpl(
     request: Json<UpdateMainCvTpl>,
     login_user_info: LoginUserInfo,
