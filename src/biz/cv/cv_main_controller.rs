@@ -148,12 +148,5 @@ pub fn update_cv_tpl(
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
     let gen_cv = update_cv_template(&request.cv_id, &request.tpl_id, &login_user_info);
-    match gen_cv {
-        Ok(main) => {
-            return box_rest_response(main);
-        }
-        Err(e) => {
-            return box_error_rest_response("-1", "500".to_string(), e.to_string());
-        }
-    }
+    return box_rest_response(gen_cv);
 }

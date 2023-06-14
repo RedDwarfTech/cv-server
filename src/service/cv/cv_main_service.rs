@@ -1,7 +1,7 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{
-    CvEdu, CvMain, CvProjectExp, CvSection, CvSectionContent, CvSkill, CvWorkExp,
+    CvEdu, CvMain, CvProjectExp, CvSection, CvSectionContent, CvSkill, CvWorkExp, CvTemplate,
 };
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::orm::cv::edu::cv_edu_add::CvEduAdd;
@@ -22,6 +22,7 @@ use crate::service::cv::edu::edu_service::{del_edu_items, get_edu_list};
 use crate::service::cv::project::project_exp_service::del_project_items;
 use crate::service::cv::skills::skills_exp_service::del_skills_items;
 use crate::service::cv::work::work_exp_service::{del_work_items, get_work_list};
+use crate::service::template::template_service::get_tempalte_by_id;
 use diesel::query_dsl::methods::BoxedDsl;
 use diesel::result::Error;
 use diesel::{BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl};
@@ -315,13 +316,15 @@ fn insert_project(
     }
 }
 
-pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUserInfo) -> Result<CvMain, diesel::result::Error> {
+pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUserInfo) -> CvTemplate {
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
         .eq(cv_id)
         .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
     let update_result = diesel::update(cv_main.filter(predicate))
         .set(template_id.eq(tpl_id))
-        .get_result::<CvMain>(&mut get_connection());
-    return update_result;
+        .get_result::<CvMain>(&mut get_connection())
+        .expect("unable to update cv main");
+    let tpl_result = get_tempalte_by_id(update_result.template_id);
+    return tpl_result;
 }
