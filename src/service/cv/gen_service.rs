@@ -27,20 +27,20 @@ pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo)
             "%"
         )));
     }
-    query = query.filter(cv_gen_table::user_id.eq(login_user_info.userId))
-    .order(cv_gen_table::created_time.desc());
+    query = query
+        .filter(cv_gen_table::user_id.eq(login_user_info.userId))
+        .order(cv_gen_table::created_time.desc());
     let user_bill_books = query
         .load::<CvGen>(&mut get_connection())
         .expect("error get user gen record");
-    let mut gen_resp:Vec<CvGenResp> = map_entity(user_bill_books);
+    let mut gen_resp: Vec<CvGenResp> = map_entity(user_bill_books);
     if !gen_resp.is_empty() {
-        let ids: Vec<i64> = gen_resp
-        .iter()
-        .map(|part| part.template_id)
-        .collect();
+        let ids: Vec<i64> = gen_resp.iter().map(|part| part.template_id).collect();
         let templtes = get_tempalte_list(Some(ids));
         for resp in gen_resp.iter_mut() {
-            let tpl = templtes.iter().find(|tpl| tpl.id == resp.template_id);
+            let tpl = templtes
+                .iter()
+                .find(|tpl| tpl.template_id == resp.template_id);
             resp.template_name = Some(tpl.as_deref().unwrap().name.clone());
             resp.preview_url = tpl.as_deref().unwrap().preview_url.clone();
         }
@@ -90,9 +90,12 @@ pub fn cv_gen_page(filter_name: Option<String>, login_user_info: &LoginUserInfo)
     return user_bill_books;
 }
 
-pub fn check_paied_plan(request: &Json<GenRequest>, login_user_info: &LoginUserInfo) -> Result<CvGen, Box<dyn Error>> {
+pub fn check_paied_plan(
+    request: &Json<GenRequest>,
+    login_user_info: &LoginUserInfo,
+) -> Result<CvGen, Box<dyn Error>> {
     if login_user_info.vipExpireTime <= get_current_millisecond() {
-        return Err(Box::new(NotVipError::new("vip-expired".to_owned(),None)));
+        return Err(Box::new(NotVipError::new("vip-expired".to_owned(), None)));
     }
     return create_gen_task(request, login_user_info);
 }
