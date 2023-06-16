@@ -5,15 +5,18 @@ use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{CvGen, CvGenAdd};
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
+use crate::model::response::cvgen::cv_gen_resp::CvGenResp;
+use crate::service::template::template_service::get_tempalte_list;
 use diesel::{
     BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl, TextExpressionMethods,
 };
 use rocket::serde::json::Json;
 use rust_wheel::common::error::not_vip_error::NotVipError;
+use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
-pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo) -> Vec<CvGen> {
+pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo) -> Vec<CvGenResp> {
     use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
     let mut query = cv_gen_table::table.into_boxed::<diesel::pg::Pg>();
     if let Some(some_filter_name) = &filter_name {
@@ -29,7 +32,20 @@ pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo)
     let user_bill_books = query
         .load::<CvGen>(&mut get_connection())
         .expect("error get user gen record");
-    return user_bill_books;
+    let mut gen_resp:Vec<CvGenResp> = map_entity(user_bill_books);
+    if !gen_resp.is_empty() {
+        let ids: Vec<i64> = gen_resp
+        .iter()
+        .map(|part| part.template_id)
+        .collect();
+        let templtes = get_tempalte_list(Some(ids));
+        for resp in gen_resp.iter_mut() {
+            let tpl = templtes.iter().find(|tpl| tpl.id == resp.template_id);
+            resp.template_name = Some(tpl.as_deref().unwrap().name.clone());
+            resp.preview_url = tpl.as_deref().unwrap().preview_url.clone();
+        }
+    }
+    return gen_resp;
 }
 
 pub fn pick_task() -> Result<CvGen, diesel::result::Error> {
