@@ -31,6 +31,19 @@ table! {
 }
 
 table! {
+    cv_lang (id) {
+        id -> Int8,
+        name -> Varchar,
+        created_time -> Int8,
+        updated_time -> Int8,
+        cv_id -> Int8,
+        level -> Nullable<Varchar>,
+        user_id -> Int8,
+        memo -> Nullable<Varchar>,
+    }
+}
+
+table! {
     cv_main (id) {
         id -> Int8,
         cv_name -> Varchar,
@@ -127,6 +140,7 @@ table! {
         preview_url -> Nullable<Varchar>,
         template_code -> Nullable<Varchar>,
         online_status -> Int4,
+        source -> Nullable<Varchar>,
     }
 }
 
@@ -149,6 +163,7 @@ table! {
 allow_tables_to_appear_in_same_query!(
     cv_edu,
     cv_gen,
+    cv_lang,
     cv_main,
     cv_project_exp,
     cv_section,

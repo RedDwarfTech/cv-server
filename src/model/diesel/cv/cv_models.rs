@@ -41,6 +41,19 @@ pub struct CvGen {
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[diesel(table_name = "cv_lang")]
+pub struct CvLang {
+    pub id: i64,
+    pub name: String,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub cv_id: i64,
+    pub level: Option<String>,
+    pub user_id: i64,
+    pub memo: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[diesel(table_name = "cv_main")]
 pub struct CvMain {
     pub id: i64,
@@ -59,6 +72,8 @@ pub struct CvMain {
     pub stackoverflow: Option<String>,
     pub github: Option<String>,
     pub blog: Option<String>,
+    pub item_order: String,
+    pub remark: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -70,11 +85,12 @@ pub struct CvProjectExp {
     pub updated_time: i64,
     pub cv_id: i64,
     pub job: Option<String>,
-    pub city: Option<String>,
+    pub company: Option<String>,
     pub work_start: Option<NaiveDate>,
     pub work_end: Option<NaiveDate>,
     pub user_id: i64,
     pub duty: Option<String>,
+    pub city: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -134,6 +150,8 @@ pub struct CvTemplate {
     pub template_id: i64,
     pub preview_url: Option<String>,
     pub template_code: Option<String>,
+    pub online_status: i32,
+    pub source: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

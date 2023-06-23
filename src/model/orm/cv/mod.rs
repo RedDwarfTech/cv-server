@@ -3,3 +3,4 @@ pub mod edu;
 pub mod work;
 pub mod skill;
 pub mod project;
+pub mod lang;

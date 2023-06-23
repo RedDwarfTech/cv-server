@@ -5,3 +5,4 @@ pub mod main;
 pub mod work;
 pub mod skills;
 pub mod project;
+pub mod lang;

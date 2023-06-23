@@ -5,3 +5,4 @@ pub mod work;
 pub mod section_content_resp;
 pub mod skill;
 pub mod project;
+pub mod lang;
