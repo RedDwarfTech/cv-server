@@ -66,6 +66,7 @@ impl CvMainResp {
             github: cv_main.github.to_owned(),
             blog: cv_main.blog.to_owned(),
             remark: cv_main.remark.to_owned(),
+            main_color: cv_main.main_color.to_owned(),
             item_order: cv_main.item_order.to_owned(),
             skills: skills,
             projects: projects,
