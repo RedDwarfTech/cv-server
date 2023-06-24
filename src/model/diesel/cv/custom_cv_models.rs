@@ -85,6 +85,7 @@ pub struct CvMain {
     pub item_order: String,
     pub remark: Option<String>,
     pub main_color: Option<String>,
+    pub theme: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

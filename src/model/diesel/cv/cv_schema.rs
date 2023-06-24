@@ -64,6 +64,7 @@ table! {
         item_order -> Varchar,
         remark -> Nullable<Varchar>,
         main_color -> Nullable<Varchar>,
+        theme -> Nullable<Varchar>,
     }
 }
 
