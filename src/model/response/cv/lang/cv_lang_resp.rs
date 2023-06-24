@@ -11,6 +11,7 @@ pub struct CvLangResp {
     pub user_id: i64,
     pub name: String,
     pub memo: Option<String>,
+    pub level: Option<String>,
 }
 
 impl From<&CvLang> for CvLangResp {
@@ -23,6 +24,7 @@ impl From<&CvLang> for CvLangResp {
             user_id: s.user_id,
             name: s.name.clone(),
             memo: s.memo.clone(),
+            level: s.level.clone(),
         }
     }
 }
