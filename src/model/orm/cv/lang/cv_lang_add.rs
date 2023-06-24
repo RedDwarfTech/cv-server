@@ -39,7 +39,7 @@ impl CvLangAdd {
             user_id: login_user_info.userId,
             cv_id: request.cv_id.clone(),
             name: request.name.clone(),
-            level: Some("".to_string()),
+            level: request.level.clone(),
             memo: request.memo.clone(),
         }
     }
