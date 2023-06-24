@@ -58,6 +58,9 @@ pub struct CvTemplate {
     pub template_code: Option<String>,
     pub online_status: i32,
     pub source: Option<String>,
+    pub font_size: Option<String>,
+    pub main_color: Option<String>,
+    pub theme: Option<String>,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

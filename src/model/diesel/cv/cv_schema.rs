@@ -141,6 +141,9 @@ table! {
         template_code -> Nullable<Varchar>,
         online_status -> Int4,
         source -> Nullable<Varchar>,
+        font_size -> Nullable<Varchar>,
+        main_color -> Nullable<Varchar>,
+        theme -> Nullable<Varchar>,
     }
 }
 
