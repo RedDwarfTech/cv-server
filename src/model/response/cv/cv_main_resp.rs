@@ -26,6 +26,7 @@ pub struct CvMainResp {
     pub item_order: String,
     pub remark: Option<String>,
     pub workplace: Option<String>,
+    pub main_color: Option<String>,
     pub cv_section: Vec<CvSectionResp>,
     pub edu: Vec<CvEduResp>,
     pub work: Vec<CvWorkResp>,
