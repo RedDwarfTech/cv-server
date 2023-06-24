@@ -351,7 +351,7 @@ pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUser
     return tpl_result;
 }
 
-pub fn update_cv_main_color(request: &Json<UpdateMainCvColor>, login_user_info: &LoginUserInfo) -> CvTemplate {
+pub fn update_cv_main_color(request: &Json<UpdateMainCvColor>, login_user_info: &LoginUserInfo) -> CvMain {
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
         .eq(request.cv_id)
@@ -360,7 +360,6 @@ pub fn update_cv_main_color(request: &Json<UpdateMainCvColor>, login_user_info: 
         .set(main_color.eq(request.main_color.clone()))
         .get_result::<CvMain>(&mut get_connection())
         .expect("unable to update cv main color");
-    let tpl_result = get_tempalte_by_id(update_result.template_id);
-    return tpl_result;
+    return update_result;
 }
 
