@@ -1,10 +1,11 @@
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
 use crate::model::diesel::cv::custom_cv_models::{
-    CvEdu, CvMain, CvProjectExp, CvSection, CvSectionContent, CvSkill, CvWorkExp, CvTemplate,
+    CvEdu, CvMain, CvProjectExp, CvSection, CvSectionContent, CvSkill, CvWorkExp, CvTemplate, CvLang,
 };
 use crate::model::orm::cv::cv_main_add::CvMainAdd;
 use crate::model::orm::cv::edu::cv_edu_add::CvEduAdd;
+use crate::model::orm::cv::lang::cv_lang_add::CvLangAdd;
 use crate::model::orm::cv::project::cv_project_add::CvProjectExpAdd;
 use crate::model::orm::cv::skill::cv_skill_add::CvSkillAdd;
 use crate::model::orm::cv::work::cv_work_add::CvWorkExpAdd;
@@ -14,11 +15,13 @@ use crate::model::request::cv::main::edit_main_sort::EditMainSort;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::edu::cv_edu_resp::CvEduResp;
+use crate::model::response::cv::lang::cv_lang_resp::CvLangResp;
 use crate::model::response::cv::project::cv_project_resp::CvProjectResp;
 use crate::model::response::cv::section_content_resp::SectionContentResp;
 use crate::model::response::cv::skill::cv_skill_resp::CvSkillResp;
 use crate::model::response::cv::work::cv_work_resp::CvWorkResp;
 use crate::service::cv::edu::edu_service::{del_edu_items, get_edu_list};
+use crate::service::cv::lang::lang_service::del_langs_items;
 use crate::service::cv::project::project_exp_service::del_project_items;
 use crate::service::cv::skills::skills_exp_service::del_skills_items;
 use crate::service::cv::work::work_exp_service::{del_work_items, get_work_list};
@@ -31,6 +34,7 @@ use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
+use super::lang::lang_service::get_lang_list;
 use super::project::project_exp_service::get_project_list;
 use super::skills::skills_exp_service::get_skill_list;
 
@@ -77,6 +81,7 @@ pub fn del_cv_by_id(cv_id: i64, login_user_info: &LoginUserInfo) -> Result<&str,
                 del_work_items(&cv_id, login_user_info);
                 del_project_items(&cv_id, login_user_info);
                 del_skills_items(&cv_id, login_user_info);
+                del_langs_items(&cv_id, login_user_info);
                 Ok("")
             }
             Err(e) => diesel::result::QueryResult::Err(e),
@@ -122,11 +127,14 @@ pub fn get_cv_info(
     let skills: Vec<crate::model::diesel::cv::custom_cv_models::CvSkill> = get_skill_list(&cv_id);
     // project
     let projects: Vec<CvProjectExp> = get_project_list(&cv_id);
+    // lang
+    let langs: Vec<CvLang> = get_lang_list(&cv_id);
     let section_resp = get_section_by_cv(cv_id);
     let edu_resp: Vec<CvEduResp> = map_entity(edues);
     let works_resp: Vec<CvWorkResp> = map_entity(works_list);
     let skill_resp: Vec<CvSkillResp> = map_entity(skills);
     let projects_resp: Vec<CvProjectResp> = map_entity(projects);
+    let lang_resp: Vec<CvLangResp> = map_entity(langs);
     let cv_resp = CvMainResp::from(
         &cv_result.get(0).unwrap(),
         section_resp,
@@ -134,6 +142,7 @@ pub fn get_cv_info(
         works_resp,
         skill_resp,
         projects_resp,
+        lang_resp,
     );
     return Some(cv_resp);
 }
@@ -256,6 +265,7 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
                         insert_work(main.work, login_user_info, &inserted_cv_id);
                         insert_skills(main.skills, login_user_info, &inserted_cv_id);
                         insert_project(main.projects, login_user_info, &inserted_cv_id);
+                        insert_langs(main.langs, login_user_info, &inserted_cv_id);
                     }
                     Err(_) => {}
                 }
@@ -298,6 +308,17 @@ fn insert_skills(workes: Vec<CvSkillResp>, login_user_info: &LoginUserInfo, inse
         let _result = diesel::insert_into(cv_skills)
             .values(&edu_add)
             .get_result::<CvSkill>(&mut get_connection());
+    }
+}
+
+fn insert_langs(workes: Vec<CvLangResp>, login_user_info: &LoginUserInfo, inserted_cv_id: &i64) {
+    use crate::model::diesel::cv::cv_schema::cv_lang::dsl::*;
+    for edu in workes.iter() {
+        let mut edu_add = CvLangAdd::from_work_resp(edu, login_user_info);
+        edu_add.cv_id = inserted_cv_id.clone();
+        let _result = diesel::insert_into(cv_lang)
+            .values(&edu_add)
+            .get_result::<CvLang>(&mut get_connection());
     }
 }
 

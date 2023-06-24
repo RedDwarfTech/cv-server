@@ -50,7 +50,7 @@ pub fn get_ui_lang_list(cv_id: &i64, login_user_info: &LoginUserInfo) -> Vec<CvL
     return cvs;
 }
 
-pub fn _get_lang_list(cv_id: &i64) -> Vec<CvLang> {
+pub fn get_lang_list(cv_id: &i64) -> Vec<CvLang> {
     use crate::model::diesel::cv::cv_schema::cv_lang as cv_work_table;
     let mut query = cv_work_table::table.into_boxed::<diesel::pg::Pg>();
     query = query.filter(cv_work_table::cv_id.eq(cv_id));
@@ -76,7 +76,7 @@ pub fn del_lang_item(item_id: &i64, login_user_info: &LoginUserInfo) -> bool {
     }
 }
 
-pub fn _del_langs_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+pub fn del_langs_items(del_cv_id: &i64, login_user_info: &LoginUserInfo) -> bool {
     use crate::model::diesel::cv::cv_schema::cv_lang::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_lang::cv_id
         .eq(del_cv_id)

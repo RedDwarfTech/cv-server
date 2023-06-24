@@ -20,7 +20,7 @@ pub struct CvLangAdd {
 
 impl CvLangAdd {
 
-    pub(crate) fn _from_work_resp(request: &CvLangResp, login_user_info: &LoginUserInfo) ->Self {
+    pub(crate) fn from_work_resp(request: &CvLangResp, login_user_info: &LoginUserInfo) ->Self {
         Self {
             created_time: get_current_millisecond(),
             updated_time: get_current_millisecond(),
