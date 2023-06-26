@@ -12,6 +12,8 @@ use crate::model::orm::cv::work::cv_work_add::CvWorkExpAdd;
 use crate::model::request::cv::main::copy_main_cv::CopyMainCv;
 use crate::model::request::cv::main::edit_main_request::EditMainRequest;
 use crate::model::request::cv::main::edit_main_sort::EditMainSort;
+use crate::model::request::cv::main::update_main_cv_color::UpdateMainCvColor;
+use crate::model::request::cv::main::update_main_cv_theme::UpdateMainCvConfig;
 use crate::model::response::cv::cv_main_resp::CvMainResp;
 use crate::model::response::cv::cv_section_resp::CvSectionResp;
 use crate::model::response::cv::edu::cv_edu_resp::CvEduResp;
@@ -348,4 +350,31 @@ pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUser
         .expect("unable to update cv main");
     let tpl_result = get_tempalte_by_id(update_result.template_id);
     return tpl_result;
+}
+
+pub fn update_cv_main_color(request: &Json<UpdateMainCvColor>, login_user_info: &LoginUserInfo) -> CvMain {
+    use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
+        .eq(request.cv_id)
+        .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
+    let update_result = diesel::update(cv_main.filter(predicate))
+        .set(main_color.eq(request.main_color.clone()))
+        .get_result::<CvMain>(&mut get_connection())
+        .expect("unable to update cv main color");
+    return update_result;
+}
+
+pub fn update_cv_main_config(request: &Json<UpdateMainCvConfig>, login_user_info: &LoginUserInfo) -> CvMain {
+    use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
+    let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
+        .eq(request.cv_id)
+        .and(crate::model::diesel::cv::cv_schema::cv_main::user_id.eq(login_user_info.userId));
+    let update_result = diesel::update(cv_main.filter(predicate))
+        .set((
+            theme.eq(request.theme.clone()),
+            font_size.eq(request.font_size.clone()),
+        ))
+        .get_result::<CvMain>(&mut get_connection())
+        .expect("unable to update cv main theme");
+    return update_result;
 }

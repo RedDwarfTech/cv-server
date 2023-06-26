@@ -63,6 +63,9 @@ table! {
         blog -> Nullable<Varchar>,
         item_order -> Varchar,
         remark -> Nullable<Varchar>,
+        main_color -> Nullable<Varchar>,
+        theme -> Nullable<Varchar>,
+        font_size -> Nullable<Varchar>,
     }
 }
 
