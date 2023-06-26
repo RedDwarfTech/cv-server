@@ -1,13 +1,13 @@
 use crate::{
     model::request::cv::main::{
         copy_main_cv::CopyMainCv, edit_main_request::EditMainRequest, edit_main_sort::EditMainSort,
-        update_main_cv_color::UpdateMainCvColor, update_main_cv_theme::UpdateMainCvTheme,
+        update_main_cv_color::UpdateMainCvColor, update_main_cv_theme::UpdateMainCvConfig,
         update_main_cv_tpl::UpdateMainCvTpl,
     },
     service::cv::cv_main_service::{
         copy_cv_main, cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary,
         get_render_cv_by_id, update_cv_main, update_cv_main_color, update_cv_main_sort,
-        update_cv_main_theme, update_cv_template,
+        update_cv_main_config, update_cv_template,
     },
 };
 use okapi::openapi3::OpenApi;
@@ -30,7 +30,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         copy_cv,
         update_cv_tpl,
         update_cv_color,
-        update_cv_theme
+        update_cv_theme,
+        update_cv_config
     ]
 }
 
@@ -174,9 +175,22 @@ pub fn update_cv_color(
 #[openapi(tag = "简历")]
 #[put("/v1/theme", data = "<request>")]
 pub fn update_cv_theme(
-    request: Json<UpdateMainCvTheme>,
+    request: Json<UpdateMainCvConfig>,
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
-    let gen_cv = update_cv_main_theme(&request, &login_user_info);
+    let gen_cv = update_cv_main_config(&request, &login_user_info);
+    return box_rest_response(gen_cv);
+}
+
+/// # 更新简历字体/主题/色调
+///
+/// 更新简历字体/主题/色调
+#[openapi(tag = "简历")]
+#[put("/v1/config", data = "<request>")]
+pub fn update_cv_config(
+    request: Json<UpdateMainCvConfig>,
+    login_user_info: LoginUserInfo,
+) -> content::RawJson<String> {
+    let gen_cv = update_cv_main_config(&request, &login_user_info);
     return box_rest_response(gen_cv);
 }

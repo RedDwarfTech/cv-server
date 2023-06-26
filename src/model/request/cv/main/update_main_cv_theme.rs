@@ -5,7 +5,8 @@ use rocket_okapi::okapi::schemars;
 
 #[derive(Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema)]
 #[allow(non_snake_case)]
-pub struct UpdateMainCvTheme {
+pub struct UpdateMainCvConfig {
     pub cv_id: i64,
-    pub theme: String,
+    pub theme: Option<String>,
+    pub font_size: Option<String>
 }
