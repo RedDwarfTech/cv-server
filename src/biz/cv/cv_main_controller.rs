@@ -1,7 +1,7 @@
 use crate::{
     model::request::cv::main::{
         copy_main_cv::CopyMainCv, edit_main_request::EditMainRequest, edit_main_sort::EditMainSort,
-        update_main_cv_color::UpdateMainCvColor, update_main_cv_theme::UpdateMainCvConfig,
+        update_main_cv_color::UpdateMainCvColor, update_main_cv_config::UpdateMainCvConfig,
         update_main_cv_tpl::UpdateMainCvTpl,
     },
     service::cv::cv_main_service::{
