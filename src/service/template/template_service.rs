@@ -19,6 +19,18 @@ pub fn get_tempalte_list(ids: Option<Vec<i64>>) -> Vec<CvTemplate> {
     if let Some(ids) = ids {
         query = query.filter(cv_tpl_table::template_id.eq_any(ids));
     }
+    let tpl = query
+        .load::<CvTemplate>(&mut get_connection())
+        .expect("error get cv template list");
+    return tpl;
+}
+
+pub fn get_online_tempalte_list(ids: Option<Vec<i64>>) -> Vec<CvTemplate> {
+    use crate::model::diesel::cv::cv_schema::cv_template as cv_tpl_table;
+    let mut query = cv_tpl_table::table.into_boxed::<diesel::pg::Pg>();
+    if let Some(ids) = ids {
+        query = query.filter(cv_tpl_table::template_id.eq_any(ids));
+    }
     query = query.filter(cv_tpl_table::online_status.eq(1));
     let tpl = query
         .load::<CvTemplate>(&mut get_connection())
