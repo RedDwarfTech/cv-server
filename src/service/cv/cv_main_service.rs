@@ -204,6 +204,9 @@ pub fn update_cv_main(
                 github.eq(&request.github),
                 blog.eq(&request.blog),
                 remark.eq(&request.remark),
+                main_color.eq("blue"),
+                theme.eq("classic"),
+                font_size.eq("10pt")
             ))
             .get_result::<CvMain>(&mut get_connection())
             .expect("unable to update cv main");
