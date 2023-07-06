@@ -12,3 +12,5 @@ serde = { version = "1.0.64", features = ["derive"] }
 diesel = { version = "2.0.4", features = ["postgres","64-column-tables","chrono","serde_json"] }
 rust_wheel = { git = "https://github.com/jiangxiaoqiang/rust_wheel.git", branch = "diesel2.0", features = ["model","common","rwconfig"]}
 chrono = {version = "0.4",features = ["serde"]}
+openssl = "*"
+openssl-probe = "0.1.2"
