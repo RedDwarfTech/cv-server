@@ -14,3 +14,5 @@ rust_wheel = { git = "https://github.com/jiangxiaoqiang/rust_wheel.git", branch 
 chrono = {version = "0.4",features = ["serde"]}
 openssl = "*"
 openssl-probe = "0.1.2"
+log4rs = "1.2.0"
+log = "0.4.0"

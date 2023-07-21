@@ -19,6 +19,8 @@ COPY --from=builder /app/settings.toml /app
 # do not copy the release folder
 COPY --from=builder /app/target/release/cv-server /app/
 COPY --from=builder /app/Rocket.toml /app
+RUN mkdir -p /app/config/
+COPY --from=builder /app/log4rs.yaml /app/config/
 CMD ["./cv-server"]
 
 
