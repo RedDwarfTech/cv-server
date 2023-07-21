@@ -12,7 +12,7 @@ mod service;
 
 #[rocket::main]
 async fn main() {
-    log4rs::init_file("config/log4rs.yaml", Default::default()).unwrap();
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
     let launch_result = create_server().launch().await;
     match launch_result {
         Ok(_) => println!("Rocket shut down gracefully."),
