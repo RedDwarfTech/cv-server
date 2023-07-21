@@ -10,6 +10,7 @@ use crate::service::template::template_service::get_tempalte_list;
 use diesel::{
     BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl, TextExpressionMethods,
 };
+use log::error;
 use rocket::serde::json::Json;
 use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::model_convert::map_entity;
@@ -170,18 +171,10 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
     return user_bill_books;
 }
 
-pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id
         .eq(gen_id)
         .and(crate::model::diesel::cv::cv_schema::cv_gen::user_id.eq(login_user_info.userId));
-    let delete_result = diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
-    match delete_result {
-        Ok(_v) => {
-            return true;
-        }
-        Err(_) => {
-            return false;
-        }
-    }
+    diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
 }
