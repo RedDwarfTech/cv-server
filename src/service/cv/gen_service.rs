@@ -171,10 +171,19 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
     return user_bill_books;
 }
 
-pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) {
+pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id
         .eq(gen_id)
         .and(crate::model::diesel::cv::cv_schema::cv_gen::user_id.eq(login_user_info.userId));
-    diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
+    let delete_result:Result<usize, diesel::result::Error> = diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
+    match delete_result {
+        Ok(_v) => {
+            return true;
+        }
+        Err(e) => {
+            error!("delete gen record facing error: {}",e);
+            return false;
+        }
+    }
 }
