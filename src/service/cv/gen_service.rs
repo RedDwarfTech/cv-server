@@ -16,6 +16,7 @@ use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
+use std::fs;
 
 pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo) -> Vec<CvGenResp> {
     use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
@@ -172,17 +173,36 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
 }
 
 pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
+    use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
+    let mut query = cv_gen_table::table.into_boxed::<diesel::pg::Pg>();
+    query = query.filter(cv_gen_table::id.eq(gen_id));
+    query = query.filter(cv_gen_table::user_id.eq(login_user_info.userId));
+    let gen_record: Vec<CvGen> = query
+        .load::<CvGen>(&mut get_connection())
+        .expect("error get render gen record");
+    if gen_record.is_empty() {
+        error!("pass invalid id when delete gen");
+        return false;
+    }
     let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id
         .eq(gen_id)
         .and(crate::model::diesel::cv::cv_schema::cv_gen::user_id.eq(login_user_info.userId));
-    let delete_result:Result<usize, diesel::result::Error> = diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
+    let delete_result: Result<usize, diesel::result::Error> =
+        diesel::delete(cv_gen.filter(predicate)).execute(&mut get_connection());
     match delete_result {
         Ok(_v) => {
+            let unwrap_record = gen_record.get(0).unwrap();
+            let file_name = unwrap_record.path.as_ref().unwrap();
+            let pdf_file_path = format!("{}{}", "/opt/cv/pdf/", file_name);
+            match fs::remove_file(pdf_file_path) {
+                Ok(_) => {}
+                Err(e) => error!("delete cv pdf failed:{}", e),
+            }
             return true;
         }
         Err(e) => {
-            error!("delete gen record facing error: {}",e);
+            error!("delete gen record facing error: {}", e);
             return false;
         }
     }
