@@ -43,7 +43,7 @@ impl CvMainAdd {
             email: Some(request.email.to_string()),
             job: Some(request.job.to_string()),
             workplace: Some(request.workplace.to_string()),
-            item_order: "1,2,3,4,5".to_string(),
+            item_order: "1,2,3,4,5,6".to_string(),
             remark: request.remark.clone(),
             stackoverflow: request.stackoverflow.clone(),
             github: request.github.clone(),

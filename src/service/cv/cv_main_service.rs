@@ -31,6 +31,7 @@ use crate::service::template::template_service::get_tempalte_by_id;
 use diesel::query_dsl::methods::BoxedDsl;
 use diesel::result::Error;
 use diesel::{BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl};
+use log::error;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
@@ -225,7 +226,7 @@ pub fn update_cv_main(
             .get_result::<CvMain>(&mut get_connection());
         match result {
             Err(err) => {
-                println!("{}", err);
+                error!("{}", err);
                 return None;
             }
             Ok(main) => {

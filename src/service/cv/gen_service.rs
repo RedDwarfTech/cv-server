@@ -182,7 +182,7 @@ pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
         .load::<CvGen>(&mut get_connection())
         .expect("error get render gen record");
     if gen_record.is_empty() {
-        error!("pass invalid id when delete gen");
+        error!("pass invalid id when delete gen, id: {}", gen_id);
         return false;
     }
     let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id
