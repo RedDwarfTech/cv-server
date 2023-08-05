@@ -147,6 +147,7 @@ table! {
         font_size -> Nullable<Varchar>,
         main_color -> Nullable<Varchar>,
         theme -> Nullable<Varchar>,
+        intro -> Varchar,
     }
 }
 
