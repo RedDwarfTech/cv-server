@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::io::{BufReader, BufRead};
 
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
@@ -7,6 +8,7 @@ use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
 use crate::model::response::cvgen::cv_gen_resp::CvGenResp;
 use crate::service::template::template_service::get_tempalte_list;
+use chrono::{Utc, Datelike};
 use diesel::{
     BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl, TextExpressionMethods,
 };
@@ -15,8 +17,9 @@ use rocket::serde::json::Json;
 use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
+use rust_wheel::config::app::app_conf_reader::get_app_config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use std::fs;
+use std::fs::{self, File};
 
 pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo) -> Vec<CvGenResp> {
     use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
@@ -48,6 +51,20 @@ pub fn cv_gen_list(filter_name: Option<String>, login_user_info: &LoginUserInfo)
         }
     }
     return gen_resp;
+}
+
+pub fn get_gen_by_id(gen_id: i64, login_user_info: &LoginUserInfo) -> CvGen {
+    use crate::model::diesel::cv::cv_schema::cv_gen as cv_gen_table;
+    let mut query = cv_gen_table::table.into_boxed::<diesel::pg::Pg>();
+    query = query.filter(
+        cv_gen_table::user_id
+            .eq(login_user_info.userId)
+            .and(cv_gen_table::id.eq(gen_id)),
+    );
+    let user_bill_books = query
+        .load::<CvGen>(&mut get_connection())
+        .expect("error get user gen record");
+    return user_bill_books[0].clone();
 }
 
 pub fn pick_task() -> Result<CvGen, diesel::result::Error> {
@@ -170,6 +187,32 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
         .load::<CvGen>(&mut get_connection())
         .expect("error get render gen record");
     return user_bill_books;
+}
+
+pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
+    let gen = get_gen_by_id(gid, login_user_info);
+    let dist_path = get_dist_path(login_user_info.userId,gen.template_id,gen.cv_id);
+    let tex_file_path = format!("{}/modern.tex", dist_path);
+    let file = File::open(tex_file_path).unwrap();
+    let reader = BufReader::new(file);
+    let mut tex_content = String::new();
+    for line in reader.lines() {
+        let line = line.unwrap_or_default();
+        tex_content.push_str(&line);
+        tex_content.push('\n');
+    }
+    return tex_content;
+}
+
+fn get_dist_path(user_id: i64, tpl_id: i64, cv_id: i64) -> String {
+    let base_cv_dir = get_app_config("cv.cv_compile_base_dir");
+    let now = Utc::now();
+    let year = now.year();
+    let month = now.month();
+    let time_path = format!("{}{}{}", year, "/", month);
+    let user_path = format!("{}{}{}{}{}", user_id, "/", cv_id, "/", tpl_id);
+    let full_path = format!("{}{}{}{}{}", base_cv_dir, "/", time_path, "/", user_path);
+    return full_path;
 }
 
 pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {

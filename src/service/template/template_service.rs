@@ -9,7 +9,7 @@ pub fn get_tempalte_by_id(tpl_id: i64) -> CvTemplate {
     query = query.filter(cv_tpl_table::template_id.eq(tpl_id));
     let tpl = query
         .load::<CvTemplate>(&mut get_connection())
-        .expect("error get user bill book");
+        .expect("error get template by id");
     return tpl.get(0).unwrap().to_owned();
 }
 

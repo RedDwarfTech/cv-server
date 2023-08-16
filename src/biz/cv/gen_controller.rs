@@ -1,6 +1,6 @@
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::service::cv::gen_service::{
-    check_gen_status, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task, check_paied_plan,
+    check_gen_status, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task, check_paied_plan, get_cv_src,
 };
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
@@ -25,7 +25,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         page,
         del_gen,
         pick_one_task,
-        check_status
+        check_status,
+        get_src
     ]
 }
 
@@ -132,5 +133,15 @@ pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Stri
 #[get("/v1/status?<ids>")]
 pub fn check_status(ids: String, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let gen_cv = check_gen_status(ids, &login_user_info);
+    return box_rest_response(gen_cv);
+}
+
+/// # 获取简历源码
+/// 
+/// 获取简历源码
+#[openapi(tag = "获取简历源码")]
+#[get("/v1/src?<id>")]
+pub fn get_src(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let gen_cv = get_cv_src(id, &login_user_info);
     return box_rest_response(gen_cv);
 }
