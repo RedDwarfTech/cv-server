@@ -5,7 +5,8 @@ use crate::{
     },
     common::health_controller,
 };
-use rocket::{Build, Rocket};
+use log::error;
+use rocket::{Build, Rocket, catchers, catch};
 use rocket_okapi::{
     mount_endpoints_and_merged_docs,
     rapidoc::{make_rapidoc, GeneralConfig, HideShowConfig, RapiDocConfig},
@@ -13,8 +14,14 @@ use rocket_okapi::{
     swagger_ui::{make_swagger_ui, SwaggerUIConfig},
 };
 
+#[catch(500)]
+fn internal_error(_req: &rocket::Request) -> String{
+    error!("internal error");
+    return "internal error".to_string();
+}
+
 pub fn create_server() -> Rocket<Build> {
-    let mut building_rocket = rocket::build()
+    let mut building_rocket = rocket::build().register("/", catchers![internal_error])
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
