@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::io::{BufReader, BufRead};
+use std::io::{BufRead, BufReader};
 
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
@@ -8,7 +8,7 @@ use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
 use crate::model::response::cvgen::cv_gen_resp::CvGenResp;
 use crate::service::template::template_service::get_tempalte_list;
-use chrono::{Utc, Datelike};
+use chrono::{Datelike, Utc};
 use diesel::{
     BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl, TextExpressionMethods,
 };
@@ -191,17 +191,28 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
 
 pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
     let gen = get_gen_by_id(gid, login_user_info);
-    let dist_path = get_dist_path(login_user_info.userId,gen.template_id,gen.cv_id);
+    let dist_path = get_dist_path(login_user_info.userId, gen.template_id, gen.cv_id);
     let tex_file_path = format!("{}/modern.tex", dist_path);
-    let file = File::open(tex_file_path).unwrap();
-    let reader = BufReader::new(file);
-    let mut tex_content = String::new();
-    for line in reader.lines() {
-        let line = line.unwrap_or_default();
-        tex_content.push_str(&line);
-        tex_content.push('\n');
+    let file = File::open(tex_file_path.clone());
+    match file {
+        Ok(read_file) => {
+            let reader = BufReader::new(read_file);
+            let mut tex_content = String::new();
+            for line in reader.lines() {
+                let line = line.unwrap_or_default();
+                tex_content.push_str(&line);
+                tex_content.push('\n');
+            }
+            return tex_content;
+        }
+        Err(e) => {
+            error!(
+                "read file facing error,{},tex file path: {}",
+                e, tex_file_path
+            );
+            return "".to_owned();
+        }
     }
-    return tex_content;
 }
 
 fn get_dist_path(user_id: i64, tpl_id: i64, cv_id: i64) -> String {
