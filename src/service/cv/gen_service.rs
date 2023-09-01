@@ -67,7 +67,7 @@ pub fn get_gen_by_id(gen_id: i64, login_user_info: &LoginUserInfo) -> CvGen {
     return user_bill_books[0].clone();
 }
 
-pub fn pick_task() -> Result<CvGen, diesel::result::Error> {
+pub fn pick_task() -> Result<Option<CvGen>, diesel::result::Error> {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
     let mut connection = get_connection();
     let result = connection.transaction(|connection| {
@@ -78,7 +78,7 @@ pub fn pick_task() -> Result<CvGen, diesel::result::Error> {
             .load::<CvGen>(connection)
             .expect("error get cv gen record");
         if user_bill_books.is_empty() {
-            return Err(diesel::result::Error::NotFound);
+            return Ok(None);
         }
         let updated_rows = diesel::update(cv_gen.find(user_bill_books[0].id))
             .set(gen_status.eq(1))

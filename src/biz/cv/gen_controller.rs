@@ -52,7 +52,7 @@ pub fn pick_one_task() -> content::RawJson<String> {
             return box_rest_response(gen_cv);
         }
         Err(e) => {
-            return box_error_rest_response("", "error".to_string(), e.to_string());
+            return box_error_rest_response("", "PICK_TASK_FAILED".to_string(), e.to_string());
         }
     }
 }
