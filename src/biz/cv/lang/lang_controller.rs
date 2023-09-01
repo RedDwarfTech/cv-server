@@ -1,14 +1,12 @@
 use crate::model::request::cv::lang::langs_request::LangsRequest;
-use crate::service::cv::lang::lang_service::{add_lang, get_ui_lang_list, del_lang_item};
+use crate::service::cv::lang::lang_service::{add_lang, del_lang_item, get_ui_lang_list};
 use okapi::openapi3::OpenApi;
 use rocket::serde::json::Json;
 use rocket::{delete, get};
 use rocket::{post, response::content};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
-use rust_wheel::common::util::model_convert::box_error_rest_response;
-use rust_wheel::{
-    common::util::model_convert::box_rest_response, model::user::login_user_info::LoginUserInfo,
-};
+use rust_wheel::common::wrapper::rocket_http_resp::{box_error_rest_response, box_rest_response};
+use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: add, langs_list, del_lang]

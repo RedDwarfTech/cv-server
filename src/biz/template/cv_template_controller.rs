@@ -2,7 +2,7 @@ use crate::service::template::template_service::{get_online_tempalte_list, get_t
 use okapi::openapi3::OpenApi;
 use rocket::{get, response::content};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
-use rust_wheel::common::util::model_convert::box_rest_response;
+use rust_wheel::common::wrapper::rocket_http_resp::box_rest_response;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: get, get_list]

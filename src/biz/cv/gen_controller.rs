@@ -1,6 +1,7 @@
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::service::cv::gen_service::{
-    check_gen_status, cv_gen_list_render, cv_gen_page, del_gen_impl, pick_task, check_paied_plan, get_cv_src,
+    check_gen_status, check_paied_plan, cv_gen_list_render, cv_gen_page, del_gen_impl, get_cv_src,
+    pick_task,
 };
 use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
@@ -11,10 +12,8 @@ use rocket::response::content;
 use rocket::serde::json::Json;
 use rocket::{delete, get, post, put};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
-use rust_wheel::common::util::model_convert::box_error_rest_response;
-use rust_wheel::{
-    common::util::model_convert::box_rest_response, model::user::login_user_info::LoginUserInfo,
-};
+use rust_wheel::common::wrapper::rocket_http_resp::{box_error_rest_response, box_rest_response};
+use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![
@@ -83,11 +82,7 @@ pub fn submit_gen_task(
         }
         Err(err) => {
             let source = err.to_string();
-            return box_error_rest_response(
-                "",
-                "submit failed".to_string(),
-                source.to_string(),
-            );
+            return box_error_rest_response("", "submit failed".to_string(), source.to_string());
         }
     }
 }
@@ -103,7 +98,7 @@ pub fn get_list_for_render(cv_name: Option<String>) -> content::RawJson<String> 
 }
 
 /// # 更新简历生成结果
-/// 
+///
 /// 更新简历生成结果
 #[openapi(tag = "简历渲染")]
 #[put("/v1/result", data = "<request>")]
@@ -113,7 +108,7 @@ pub fn flush_render_result(request: Json<RenderResultRequest>) -> content::RawJs
 }
 
 /// # 删除简历生成结果
-/// 
+///
 /// 删除简历生成结果
 #[openapi(tag = "简历渲染")]
 #[delete("/v1/<id>")]
@@ -127,7 +122,7 @@ pub fn del_gen(id: i64, login_user_info: LoginUserInfo) -> content::RawJson<Stri
 }
 
 /// # 查看简历生成结果
-/// 
+///
 /// 查看简历生成结果
 #[openapi(tag = "简历渲染")]
 #[get("/v1/status?<ids>")]
@@ -137,7 +132,7 @@ pub fn check_status(ids: String, login_user_info: LoginUserInfo) -> content::Raw
 }
 
 /// # 获取简历源码
-/// 
+///
 /// 获取简历源码
 #[openapi(tag = "获取简历源码")]
 #[get("/v1/src?<id>")]

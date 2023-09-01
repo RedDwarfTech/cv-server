@@ -6,15 +6,15 @@ use crate::{
     },
     service::cv::cv_main_service::{
         copy_cv_main, cv_main_list, del_cv_by_id, get_cv_by_id, get_cv_summary,
-        get_render_cv_by_id, update_cv_main, update_cv_main_color, update_cv_main_sort,
-        update_cv_main_config, update_cv_template,
+        get_render_cv_by_id, update_cv_main, update_cv_main_color, update_cv_main_config,
+        update_cv_main_sort, update_cv_template,
     },
 };
 use okapi::openapi3::OpenApi;
 use rocket::{delete, get, post, put, response::content, serde::json::Json};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::{
-    common::util::model_convert::{box_error_rest_response, box_rest_response},
+    common::wrapper::rocket_http_resp::{box_error_rest_response, box_rest_response},
     model::user::login_user_info::LoginUserInfo,
 };
 

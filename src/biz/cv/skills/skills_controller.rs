@@ -1,14 +1,14 @@
 use crate::model::request::cv::skills::skills_request::SkillsRequest;
-use crate::service::cv::skills::skills_exp_service::{add_skill, get_ui_skill_list, del_skill_item};
+use crate::service::cv::skills::skills_exp_service::{
+    add_skill, del_skill_item, get_ui_skill_list,
+};
 use okapi::openapi3::OpenApi;
-use rocket::{get, delete};
 use rocket::serde::json::Json;
+use rocket::{delete, get};
 use rocket::{post, response::content};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
-use rust_wheel::common::util::model_convert::box_error_rest_response;
-use rust_wheel::{
-    common::util::model_convert::box_rest_response, model::user::login_user_info::LoginUserInfo,
-};
+use rust_wheel::common::wrapper::rocket_http_resp::{box_error_rest_response, box_rest_response};
+use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: add, skills_list, del_skill]
@@ -19,7 +19,10 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 专业技能
 #[openapi(tag = "简历-专业技能")]
 #[post("/v1", data = "<request>")]
-pub fn add(request: Json<SkillsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn add(
+    request: Json<SkillsRequest>,
+    login_user_info: LoginUserInfo,
+) -> content::RawJson<String> {
     let cv_edu_list = add_skill(&request, &login_user_info);
     match cv_edu_list {
         Ok(work) => {
@@ -50,7 +53,7 @@ pub fn del_skill(skill_id: i64, login_user_info: LoginUserInfo) -> content::RawJ
     let cv_edu_list = del_skill_item(&skill_id, &login_user_info);
     if cv_edu_list {
         return box_rest_response(skill_id);
-    }else{
-        return box_error_rest_response("-1","500".to_string(),"failed".to_string());
+    } else {
+        return box_error_rest_response("-1", "500".to_string(), "failed".to_string());
     }
 }
