@@ -84,7 +84,7 @@ pub fn pick_task() -> Result<Option<CvGen>, diesel::result::Error> {
             .set(gen_status.eq(1))
             .get_result::<CvGen>(connection);
         match updated_rows {
-            Ok(r) => Ok(r),
+            Ok(r) => Ok(Some(r)),
             Err(e) => diesel::result::QueryResult::Err(e),
         }
     });
