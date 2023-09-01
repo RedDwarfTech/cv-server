@@ -48,8 +48,8 @@ pub fn list(cv_name: Option<String>, login_user_info: LoginUserInfo) -> content:
 pub fn pick_one_task() -> content::RawJson<String> {
     let gen_cv = pick_task();
     match gen_cv {
-        Ok(gen_cv) => {
-            return box_rest_response(gen_cv);
+        Ok(queue_cv) => {
+            return box_rest_response(queue_cv.unwrap_or_default());
         }
         Err(e) => {
             return box_error_rest_response("", "PICK_TASK_FAILED".to_string(), e.to_string());
