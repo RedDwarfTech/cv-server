@@ -8,7 +8,6 @@ use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
 use crate::model::response::cvgen::cv_gen_resp::CvGenResp;
 use crate::service::template::template_service::get_tempalte_list;
-use chrono::{Datelike, Utc};
 use diesel::{
     BoolExpressionMethods, Connection, ExpressionMethods, QueryDsl, TextExpressionMethods,
 };
@@ -17,7 +16,6 @@ use rocket::serde::json::Json;
 use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
-use rust_wheel::config::app::app_conf_reader::get_app_config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use std::fs::{self, File};
 
@@ -192,9 +190,10 @@ pub fn check_gen_status(ids: String, login_user_info: &LoginUserInfo) -> Vec<CvG
 
 pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
     let gen = get_gen_by_id(gid, login_user_info);
-    let dist_path = get_dist_path(login_user_info.userId, gen.template_id, gen.cv_id);
-    let tex_file_path = format!("{}/modern.tex", dist_path);
-    let file = File::open(tex_file_path.clone());
+    if gen.tex_file_path.is_none() {
+        return "".to_owned();
+    }
+    let file = File::open(&gen.tex_file_path.unwrap().clone());
     match file {
         Ok(read_file) => {
             let reader = BufReader::new(read_file);
@@ -207,24 +206,10 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
             return tex_content;
         }
         Err(e) => {
-            error!(
-                "read file facing error,{},tex file path: {}",
-                e, tex_file_path
-            );
+            error!("read file facing error,{}, gid: {}", e, gid);
             return "".to_owned();
         }
     }
-}
-
-fn get_dist_path(user_id: i64, tpl_id: i64, cv_id: i64) -> String {
-    let base_cv_dir = get_app_config("cv.cv_compile_base_dir");
-    let now = Utc::now();
-    let year = now.year();
-    let month = now.month();
-    let time_path = format!("{}{}{}", year, "/", month);
-    let user_path = format!("{}{}{}{}{}", user_id, "/", cv_id, "/", tpl_id);
-    let full_path = format!("{}{}{}{}{}", base_cv_dir, "/", time_path, "/", user_path);
-    return full_path;
 }
 
 pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
