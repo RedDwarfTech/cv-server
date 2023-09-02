@@ -26,6 +26,17 @@ pub struct CvGen {
     pub path: Option<String>,
     pub template_id: i64,
     pub cv_id: i64,
+    pub tex_file_path: Option<String>,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone,AsChangeset)]
+#[diesel(table_name = cv_gen)]
+pub struct CvGenUpdate {
+    pub gen_status: i32,
+    pub path: Option<String>,
+    pub tex_file_path: Option<String>,
+    pub gen_time: Option<i64>,
+    pub updated_time: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

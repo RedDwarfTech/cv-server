@@ -3,7 +3,7 @@ use std::io::{BufRead, BufReader};
 
 use crate::common::database::get_connection;
 use crate::diesel::RunQueryDsl;
-use crate::model::diesel::cv::custom_cv_models::{CvGen, CvGenAdd};
+use crate::model::diesel::cv::custom_cv_models::{CvGen, CvGenAdd, CvGenUpdate};
 use crate::model::request::cv::gen_request::GenRequest;
 use crate::model::request::cv::render_result_request::RenderResultRequest;
 use crate::model::response::cvgen::cv_gen_resp::CvGenResp;
@@ -167,12 +167,13 @@ pub fn update_gen_result(request: Json<RenderResultRequest>) {
     use crate::model::diesel::cv::cv_schema::cv_gen::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_gen::id.eq(request.id);
     diesel::update(cv_gen.filter(predicate))
-        .set((
-            gen_status.eq(&request.gen_status),
-            (path.eq(request.path.to_string())),
-            (updated_time.eq(get_current_millisecond())),
-            (gen_time.eq(get_current_millisecond())),
-        ))
+        .set(&CvGenUpdate {
+            gen_status: request.gen_status,
+            path: request.path.clone(),
+            tex_file_path: request.tex_file_path.clone(),
+            gen_time: Some(get_current_millisecond()),
+            updated_time: get_current_millisecond(),
+        })
         .get_result::<CvGen>(&mut get_connection())
         .expect("unable to update ren result");
 }

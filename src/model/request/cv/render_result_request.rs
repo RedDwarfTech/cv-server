@@ -10,5 +10,6 @@ pub struct RenderResultRequest {
     pub gen_status: i32,
     /// 渲染记录ID
     pub id: i64,
-    pub path: String,
+    pub path: Option<String>,
+    pub tex_file_path: Option<String>,
 }

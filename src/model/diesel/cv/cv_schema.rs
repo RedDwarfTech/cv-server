@@ -27,6 +27,7 @@ table! {
         path -> Nullable<Varchar>,
         template_id -> Int8,
         cv_id -> Int8,
+        tex_file_path -> Nullable<Varchar>,
     }
 }
 
