@@ -153,7 +153,7 @@ pub fn update_cv_tpl(
     login_user_info: LoginUserInfo,
 ) -> content::RawJson<String> {
     let gen_cv = update_cv_template(&request.cv_id, &request.tpl_id, &login_user_info);
-    return box_rest_response(gen_cv);
+    return box_rest_response(gen_cv.unwrap());
 }
 
 /// # 更新简历主色调

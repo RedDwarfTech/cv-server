@@ -343,7 +343,7 @@ fn insert_project(
     }
 }
 
-pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUserInfo) -> CvTemplate {
+pub fn update_cv_template(cv_id: &i64, tpl_id: &i64, login_user_info: &LoginUserInfo) -> Option<CvTemplate> {
     use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
     let predicate = crate::model::diesel::cv::cv_schema::cv_main::id
         .eq(cv_id)
