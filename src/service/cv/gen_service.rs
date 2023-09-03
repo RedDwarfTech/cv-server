@@ -195,7 +195,7 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
     if gen.tex_file_path.is_none() {
         return "".to_owned();
     }
-    let base_cv_dir = get_app_config("cv.cv_compile_base_dir");
+    let base_cv_dir = get_app_config("cv.cv_output_base_dir");
     let file_path = join_paths(&[base_cv_dir,gen.tex_file_path.unwrap().clone()]);
     let file = File::open(&file_path);
     match file {
