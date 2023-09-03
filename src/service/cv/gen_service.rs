@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::error::Error;
 use std::io::{BufRead, BufReader};
 
@@ -198,11 +197,7 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
     }
     let base_cv_dir = get_app_config("cv.cv_compile_base_dir");
     let file_path = join_paths(&[base_cv_dir,gen.tex_file_path.unwrap().clone()]);
-    if let Err(e) = file_path {
-        error!("join path failed, {}", e);
-        return "".to_owned();
-    }
-    let file = File::open(file_path.as_ref().unwrap());
+    let file = File::open(&file_path);
     match file {
         Ok(read_file) => {
             let reader = BufReader::new(read_file);
@@ -215,9 +210,7 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
             return tex_content;
         }
         Err(e) => {
-            let read_file_path = file_path.as_ref().unwrap();
-            let str_slice: Cow<str> = read_file_path.to_string_lossy();
-            error!("read file facing error, {}, gid: {}, file path: {}", e, gid, str_slice);
+            error!("read file facing error, {}, gid: {}, file path: {}", e, gid, file_path);
             return "".to_owned();
         }
     }
