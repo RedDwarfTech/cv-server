@@ -1,3 +1,4 @@
+use std::env::join_paths;
 use std::error::Error;
 use std::io::{BufRead, BufReader};
 
@@ -196,7 +197,11 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
     }
     let base_cv_dir = get_app_config("cv.cv_compile_base_dir");
     let file_path = join_paths(&[base_cv_dir,gen.tex_file_path.unwrap().clone()]);
-    let file = File::open(file_path);
+    if let Err(e) = file_path {
+        error!("join path failed, {}", e);
+        return "".to_owned();
+    }
+    let file = File::open(file_path.unwrap());
     match file {
         Ok(read_file) => {
             let reader = BufReader::new(read_file);
@@ -213,15 +218,6 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
             return "".to_owned();
         }
     }
-}
-
-fn join_paths<T: AsRef<str>>(paths: &[T]) -> String {
-    let joined = paths
-        .iter()
-        .map(|path| path.as_ref().trim_matches('/'))
-        .collect::<Vec<_>>()
-        .join("/");
-    format!("/{}", joined)
 }
 
 pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
