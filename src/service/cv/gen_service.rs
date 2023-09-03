@@ -16,6 +16,7 @@ use rocket::serde::json::Json;
 use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::common::util::time_util::get_current_millisecond;
+use rust_wheel::config::app::app_conf_reader::get_app_config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use std::fs::{self, File};
 
@@ -193,7 +194,9 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
     if gen.tex_file_path.is_none() {
         return "".to_owned();
     }
-    let file = File::open(&gen.tex_file_path.unwrap().clone());
+    let base_cv_dir = get_app_config("cv.cv_compile_base_dir");
+    let file_path = join_paths(&[base_cv_dir,gen.tex_file_path.unwrap().clone()]);
+    let file = File::open(file_path);
     match file {
         Ok(read_file) => {
             let reader = BufReader::new(read_file);
@@ -206,10 +209,19 @@ pub fn get_cv_src(gid: i64, login_user_info: &LoginUserInfo) -> String {
             return tex_content;
         }
         Err(e) => {
-            error!("read file facing error,{}, gid: {}", e, gid);
+            error!("read file facing error, {}, gid: {}", e, gid);
             return "".to_owned();
         }
     }
+}
+
+fn join_paths<T: AsRef<str>>(paths: &[T]) -> String {
+    let joined = paths
+        .iter()
+        .map(|path| path.as_ref().trim_matches('/'))
+        .collect::<Vec<_>>()
+        .join("/");
+    format!("/{}", joined)
 }
 
 pub fn del_gen_impl(gen_id: &i64, login_user_info: &LoginUserInfo) -> bool {
