@@ -1,5 +1,4 @@
 use std::borrow::Cow;
-use std::env::join_paths;
 use std::error::Error;
 use std::io::{BufRead, BufReader};
 
@@ -17,6 +16,7 @@ use log::error;
 use rocket::serde::json::Json;
 use rust_wheel::common::error::not_vip_error::NotVipError;
 use rust_wheel::common::util::model_convert::map_entity;
+use rust_wheel::common::util::rd_file_util::join_paths;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::app::app_conf_reader::get_app_config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
