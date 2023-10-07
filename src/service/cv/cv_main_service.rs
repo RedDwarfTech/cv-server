@@ -260,7 +260,6 @@ pub fn copy_cv_main(request: &Json<CopyMainCv>, login_user_info: &LoginUserInfo)
             cv_summary.cv_name = format!("{}{}", cv_summary.cv_name, "-Copy");
             use crate::model::diesel::cv::cv_schema::cv_main::dsl::*;
             let _result = connection.transaction(|conn| {
-                // insert main
                 let record_id = diesel::insert_into(cv_main)
                     .values(&cv_summary)
                     .returning(id)
