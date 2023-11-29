@@ -7,7 +7,6 @@ use crate::{
     model::request::cv::render_result_request::RenderResultRequest,
     service::cv::gen_service::{cv_gen_list, update_gen_result},
 };
-use okapi::openapi3::OpenApi;
 use rocket::response::content;
 use rocket::serde::json::Json;
 use rocket::{delete, get, post, put};
@@ -15,7 +14,7 @@ use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use rust_wheel::common::wrapper::rocket_http_resp::{box_error_rest_response, box_rest_response};
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
-pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
+pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, rocket_okapi::okapi::openapi3::OpenApi) {
     openapi_get_routes_spec![
         settings: list,
         flush_render_result,
